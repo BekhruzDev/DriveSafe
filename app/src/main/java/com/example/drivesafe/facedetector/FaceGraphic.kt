@@ -19,7 +19,7 @@ package com.example.drivesafe.facedetector
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import com.example.drivesafe.GraphicOverlay
+import com.example.drivesafe.mlkit_utils.GraphicOverlay
 import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceLandmark
 import com.google.mlkit.vision.face.FaceLandmark.LandmarkType

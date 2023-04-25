@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.drivesafe;
+package com.example.drivesafe.mlkit_utils;
 
 import android.content.ContentResolver;
 import android.graphics.Bitmap;

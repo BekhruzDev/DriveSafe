@@ -24,8 +24,8 @@ import android.preference.PreferenceFragment;
 
 import androidx.annotation.StringRes;
 
-import com.example.drivesafe.CameraSource;
-import com.example.drivesafe.CameraSource.SizePair;
+import com.example.drivesafe.mlkit_utils.CameraSource;
+import com.example.drivesafe.mlkit_utils.CameraSource.SizePair;
 import com.example.drivesafe.R;
 
 import java.util.HashMap;

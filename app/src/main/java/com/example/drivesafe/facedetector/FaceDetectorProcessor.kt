@@ -18,8 +18,8 @@ package com.example.drivesafe.facedetector
 
 import android.content.Context
 import android.util.Log
-import com.example.drivesafe.GraphicOverlay
-import com.example.drivesafe.VisionProcessorBase
+import com.example.drivesafe.mlkit_utils.GraphicOverlay
+import com.example.drivesafe.mlkit_utils.VisionProcessorBase
 import com.google.android.gms.tasks.Task
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face

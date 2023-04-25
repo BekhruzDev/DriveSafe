@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.drivesafe;
+package com.example.drivesafe.mlkit_utils;
 
 import androidx.annotation.NonNull;
 

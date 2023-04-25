@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.drivesafe.cameraxLivePreview
+package com.example.drivesafe.camerax_live_preview
 
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -24,17 +24,16 @@ import android.view.View
 import android.widget.*
 import android.widget.AdapterView.OnItemSelectedListener
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.OnBackPressedDispatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import com.example.drivesafe.CameraXViewModel
-import com.example.drivesafe.GraphicOverlay
+import com.example.drivesafe.mlkit_utils.CameraXViewModel
+import com.example.drivesafe.mlkit_utils.GraphicOverlay
 import com.example.drivesafe.R
-import com.example.drivesafe.VisionImageProcessor
+import com.example.drivesafe.mlkit_utils.VisionImageProcessor
 import com.example.drivesafe.facedetector.FaceDetectorProcessor
 import com.example.drivesafe.preference.PreferenceUtils
 import com.example.drivesafe.preference.SettingsActivity

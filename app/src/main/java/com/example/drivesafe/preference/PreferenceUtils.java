@@ -24,8 +24,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.camera.core.CameraSelector;
 
-import com.example.drivesafe.CameraSource;
-import com.example.drivesafe.CameraSource.SizePair;
+import com.example.drivesafe.mlkit_utils.CameraSource;
+import com.example.drivesafe.mlkit_utils.CameraSource.SizePair;
 import com.example.drivesafe.R;
 import com.google.android.gms.common.images.Size;
 import com.google.common.base.Preconditions;

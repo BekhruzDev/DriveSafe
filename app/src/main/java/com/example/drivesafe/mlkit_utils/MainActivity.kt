@@ -1,4 +1,4 @@
-package com.example.drivesafe
+package com.example.drivesafe.mlkit_utils
 
 import android.Manifest
 import android.content.Context
@@ -10,7 +10,8 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import com.example.drivesafe.cameraxLivePreview.CameraXLivePreviewActivity
+import com.example.drivesafe.R
+import com.example.drivesafe.camerax_live_preview.CameraXLivePreviewActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
