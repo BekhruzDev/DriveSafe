@@ -17,6 +17,7 @@
 package com.example.drivesafe.cameraxLivePreview
 
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -59,6 +60,8 @@ class CameraXLivePreviewActivity :
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     Log.d(TAG, "onCreate")
+    val hasExtCamSupport = packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_EXTERNAL)
+    Log.d("ExtCamSupport", "$hasExtCamSupport")
     if (savedInstanceState != null) {
       selectedModel = savedInstanceState.getString(STATE_SELECTED_MODEL, FACE_DETECTION)
     }

@@ -20,11 +20,12 @@ class MainActivity : AppCompatActivity() {
         if (!allRuntimePermissionsGranted()) {
             getRuntimePermissions()
         }
+
     }
 
         private fun allRuntimePermissionsGranted(): Boolean {
             for (permission in REQUIRED_RUNTIME_PERMISSIONS) {
-                permission?.let {
+                permission.let {
                     if (!isPermissionGranted(this, it)) {
                         return false
                     }
@@ -36,7 +37,7 @@ class MainActivity : AppCompatActivity() {
         private fun getRuntimePermissions() {
             val permissionsToRequest = ArrayList<String>()
             for (permission in REQUIRED_RUNTIME_PERMISSIONS) {
-                permission?.let {
+                permission.let {
                     if (!isPermissionGranted(this, it)) {
                         permissionsToRequest.add(permission)
                     }
