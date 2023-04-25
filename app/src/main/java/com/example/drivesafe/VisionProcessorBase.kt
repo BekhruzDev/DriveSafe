@@ -39,6 +39,9 @@ import com.google.android.odml.image.MediaMlImageBuilder
 import com.google.android.odml.image.MlImage
 import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.common.InputImage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.lang.Math.max
 import java.lang.Math.min
 import java.nio.ByteBuffer
@@ -53,7 +56,7 @@ import java.util.TimerTask
  * @param <T> The type of the detected feature.
  */
 abstract class VisionProcessorBase<T>(context: Context) : VisionImageProcessor {
-
+  val coroutineScope = CoroutineScope(Dispatchers.Default)
   companion object {
     const val MANUAL_TESTING_LOG = "LogTagForTest"
     private const val TAG = "VisionProcessorBase"
@@ -77,7 +80,7 @@ abstract class VisionProcessorBase<T>(context: Context) : VisionImageProcessor {
   private var minDetectorMs = Long.MAX_VALUE
 
   // Frame count that have been processed so far in an one second interval to calculate FPS.
-  private var frameProcessedInOneSecondInterval = 0
+  private var frameProcessedInOneSecondInterval = 20
   private var framesPerSecond = 0
 
   // To keep the latest images and its metadata.
@@ -88,16 +91,19 @@ abstract class VisionProcessorBase<T>(context: Context) : VisionImageProcessor {
   @GuardedBy("this") private var processingMetaData: FrameMetadata? = null
 
   init {
-    fpsTimer.scheduleAtFixedRate(
-      object : TimerTask() {
-        override fun run() {
-          framesPerSecond = frameProcessedInOneSecondInterval
-          frameProcessedInOneSecondInterval = 0
-        }
-      },
-      0,
-      1000
-    )
+    coroutineScope.launch {
+      fpsTimer.scheduleAtFixedRate(
+        object : TimerTask() {
+          override fun run() {
+            framesPerSecond = frameProcessedInOneSecondInterval
+            frameProcessedInOneSecondInterval = 0
+          }
+        },
+        0,
+        1000
+      )
+    }
+
   }
 
   // -----------------Code for processing single still image----------------------------------------

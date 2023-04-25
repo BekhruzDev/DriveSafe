@@ -9,21 +9,33 @@ import android.os.Bundle
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.drivesafe.cameraxLivePreview.CameraXLivePreviewActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.ArrayList
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+        lifecycleScope.launch(Dispatchers.Main) {
+            delay(4000)
+            initCameraXActivity()
+            finish()
+        }
+    }
+
+    private fun initCameraXActivity() {
         val intent = Intent(this, CameraXLivePreviewActivity::class.java)
         startActivity(intent)
         if (!allRuntimePermissionsGranted()) {
             getRuntimePermissions()
         }
-
     }
 
-        private fun allRuntimePermissionsGranted(): Boolean {
+    private fun allRuntimePermissionsGranted(): Boolean {
             for (permission in REQUIRED_RUNTIME_PERMISSIONS) {
                 permission.let {
                     if (!isPermissionGranted(this, it)) {
