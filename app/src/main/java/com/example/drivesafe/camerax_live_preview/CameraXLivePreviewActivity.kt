@@ -262,7 +262,6 @@ class CameraXLivePreviewActivity :
 
   companion object {
     private const val TAG = "CameraXLivePreview"
-    private const val OBJECT_DETECTION = "Object Detection"
     private const val FACE_DETECTION = "Face Detection"
     private const val STATE_SELECTED_MODEL = "selected_model"
   }
