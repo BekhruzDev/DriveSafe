@@ -30,7 +30,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import com.example.drivesafe.mlkit_utils.CameraXViewModel
+import com.example.drivesafe.camerax_live_preview.CameraXViewModel
 import com.example.drivesafe.mlkit_utils.GraphicOverlay
 import com.example.drivesafe.R
 import com.example.drivesafe.mlkit_utils.VisionImageProcessor
@@ -80,7 +80,7 @@ class CameraXLivePreviewActivity :
     facingSwitch.setOnCheckedChangeListener(this)
     ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))
       .get(CameraXViewModel::class.java)
-      .processCameraProvider
+      .getProcessCameraProvider()
       .observe(
         this
       ) { provider: ProcessCameraProvider? ->
