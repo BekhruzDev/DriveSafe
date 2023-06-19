@@ -24,10 +24,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.drivesafe.R;
 
+import dagger.hilt.android.AndroidEntryPoint;
+
 /**
  * Hosts the preference fragment to configure settings for a demo activity that specified by the
  * {@link LaunchSource}.
  */
+@AndroidEntryPoint
 public class SettingsActivity extends AppCompatActivity {
 
   public static final String EXTRA_LAUNCH_SOURCE = "extra_launch_source";

@@ -7,14 +7,17 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.concurrent.ExecutionException
+import javax.inject.Inject
 
 /** View model for interacting with CameraX. */
-class CameraXViewModel(application: Application) : AndroidViewModel(application) {
+@HiltViewModel
+class CameraXViewModel
+    @Inject constructor(application: Application) : AndroidViewModel(application) {
 
     private val TAG = "CameraXViewModel"
     private var cameraProviderLiveData: MutableLiveData<ProcessCameraProvider>? = null
-
     /**
      * Create an instance which interacts with the camera service via the given application context.
      */
