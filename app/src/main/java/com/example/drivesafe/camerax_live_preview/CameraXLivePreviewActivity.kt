@@ -61,6 +61,7 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         Log.d(TAG, "onCreate")
         val hasExtCamSupport =
             packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_EXTERNAL)
@@ -82,21 +83,7 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
         options.add(FACE_DETECTION)
         val facingSwitch = findViewById<ToggleButton>(R.id.facing_switch)
         facingSwitch.setOnCheckedChangeListener(this)
-        cameraXViewModel.getProcessCameraProvider().observe(this) {
-            cameraProvider = it
-            bindAllCameraUseCases()
-        }
-
-        /*  ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))
-            .get(CameraXViewModel::class.java)
-            .getProcessCameraProvider()
-            .observe(
-              this
-            ) { provider: ProcessCameraProvider? ->
-              cameraProvider = provider
-              bindAllCameraUseCases()
-            }
-      */
+        initCameraProvider()
         val settingsButton = findViewById<ImageView>(R.id.settings_button)
         settingsButton.setOnClickListener {
             val intent = Intent(applicationContext, SettingsActivity::class.java)
@@ -107,12 +94,24 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
             startActivity(intent)
         }
 
+        handleBackPressed()
+    }
+
+    private fun handleBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 finish()
             }
         }
         this.onBackPressedDispatcher.addCallback(this, callback)
+    }
+
+    private fun initCameraProvider() {
+        cameraXViewModel.getProcessCameraProvider().observe(this) {
+            cameraProvider = it
+            bindAllCameraUseCases()
+        }
+        Log.d(TAG, "Initialized CameraProvider")
     }
 
     override fun onSaveInstanceState(bundle: Bundle) {
@@ -204,7 +203,7 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
             builder.setTargetResolution(targetResolution)
         }
         previewUseCase = builder.build()
-        previewUseCase!!.setSurfaceProvider(previewView!!.getSurfaceProvider())
+        previewUseCase!!.setSurfaceProvider(previewView!!.surfaceProvider)
         cameraProvider!!.bindToLifecycle(/* lifecycleOwner = */ this,
             cameraSelector!!,
             previewUseCase
