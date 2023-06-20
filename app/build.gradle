@@ -75,6 +75,10 @@ dependencies {
     //activity-ktx
     implementation "androidx.activity:activity-ktx:1.7.2"
 
+    //Usb camera libs
+    implementation project(':libuvccamera')
+    implementation project(':usbCameraCommon')
+
 }
 configurations {
     // Resolves dependency conflict caused by some dependencies use
