@@ -11,7 +11,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.drivesafe.R
-import com.example.drivesafe.camerax_live_preview.CameraXLivePreviewActivity
+import com.example.drivesafe.ui.camerax_live_preview.CameraXLivePreviewActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

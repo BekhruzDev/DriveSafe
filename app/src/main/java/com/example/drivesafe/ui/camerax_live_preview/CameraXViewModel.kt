@@ -1,4 +1,4 @@
-package com.example.drivesafe.camerax_live_preview
+package com.example.drivesafe.ui.camerax_live_preview
 
 import android.app.Application
 import android.util.Log

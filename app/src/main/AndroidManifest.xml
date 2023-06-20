@@ -44,7 +44,7 @@
         </activity>
 
         <activity
-            android:name=".camerax_live_preview.CameraXLivePreviewActivity"
+            android:name=".ui.camerax_live_preview.CameraXLivePreviewActivity"
             android:exported="false"
             android:theme="@style/AppTheme">
         </activity>

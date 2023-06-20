@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.drivesafe.camerax_live_preview
+package com.example.drivesafe.ui.camerax_live_preview
 
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -79,8 +79,6 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
         if (graphicOverlay == null) {
             Log.d(TAG, "graphicOverlay is null")
         }
-        val options: MutableList<String> = ArrayList()
-        options.add(FACE_DETECTION)
         val facingSwitch = findViewById<ToggleButton>(R.id.facing_switch)
         facingSwitch.setOnCheckedChangeListener(this)
         initCameraProvider()
@@ -97,14 +95,6 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
         handleBackPressed()
     }
 
-    private fun handleBackPressed() {
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                finish()
-            }
-        }
-        this.onBackPressedDispatcher.addCallback(this, callback)
-    }
 
     private fun initCameraProvider() {
         cameraXViewModel.getProcessCameraProvider().observe(this) {
@@ -249,7 +239,7 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
 
         analysisUseCase?.setAnalyzer(
             // imageProcessor.processImageProxy will use another thread to run the detection underneath,
-            // thus we can just runs the analyzer itself on main thread.
+            // thus we can just run the analyzer itself on main thread.
             ContextCompat.getMainExecutor(this),
             ImageAnalysis.Analyzer { imageProxy: ImageProxy ->
                 if (needUpdateGraphicOverlayImageSourceInfo) {
@@ -283,6 +273,14 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
             cameraSelector!!,
             analysisUseCase
         )
+    }
+    private fun handleBackPressed() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
+            }
+        }
+        this.onBackPressedDispatcher.addCallback(this, callback)
     }
 
     companion object {
