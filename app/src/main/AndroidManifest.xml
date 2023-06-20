@@ -49,7 +49,7 @@
             android:theme="@style/AppTheme">
         </activity>
         <activity
-            android:name=".preference.SettingsActivity"
+            android:name=".ui.SettingsActivity"
             android:exported="false"/>
     </application>
 

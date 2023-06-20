@@ -30,17 +30,15 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
 import com.example.drivesafe.mlkit_utils.GraphicOverlay
 import com.example.drivesafe.R
 import com.example.drivesafe.mlkit_utils.VisionImageProcessor
 import com.example.drivesafe.facedetector.FaceDetectorProcessor
 import com.example.drivesafe.preference.PreferenceUtils
-import com.example.drivesafe.preference.SettingsActivity
+import com.example.drivesafe.ui.SettingsActivity
 import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 /** Live preview demo app for ML Kit APIs using CameraX. */
 @KeepName
