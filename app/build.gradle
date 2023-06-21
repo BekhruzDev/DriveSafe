@@ -43,6 +43,12 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+    packagingOptions {
+        exclude 'lib/armeabi/*.so'
+        exclude 'lib/arm64-v8a/*.so'
+        exclude 'lib/mips64/*.so'
+        exclude 'lib/x86_64/*.so'
+    }
 }
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])

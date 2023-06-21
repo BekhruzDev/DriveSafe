@@ -98,7 +98,7 @@ class UsbCameraLivePreviewActivity :
         val st: SurfaceTexture? = binding.cameraView.surfaceTexture
         cameraUvcHandler?.startPreview(Surface(st))
         //runOnUiThread { mCaptureButton.setVisibility(View.VISIBLE) }
-       // updateItems()
+        // updateItems()
     }
 
     companion object {

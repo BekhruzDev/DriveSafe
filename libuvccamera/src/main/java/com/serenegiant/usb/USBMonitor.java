@@ -406,6 +406,7 @@ public final class USBMonitor {
 				}
 			} else {
 				mHasPermissions.remove(deviceKey);
+				//mUsbManager.requestPermission(device, mPermissionIntent);
 			}
 		}
 		return hasPermission;
@@ -976,6 +977,14 @@ public final class USBMonitor {
 			mWeakMonitor = new WeakReference<USBMonitor>(monitor);
 			mWeakDevice = new WeakReference<UsbDevice>(device);
 			mConnection = monitor.mUsbManager.openDevice(device);
+			if (mConnection == null) {
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				mConnection = monitor.mUsbManager.openDevice(device);
+			}
 			mInfo = updateDeviceInfo(monitor.mUsbManager, device, null);
 			final String name = device.getDeviceName();
 			final String[] v = !TextUtils.isEmpty(name) ? name.split("/") : null;
