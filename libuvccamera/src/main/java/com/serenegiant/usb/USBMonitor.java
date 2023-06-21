@@ -388,7 +388,7 @@ public final class USBMonitor {
 	 */
 	public final boolean hasPermission(final UsbDevice device) throws IllegalStateException {
 		if (destroyed) throw new IllegalStateException("already destroyed");
-		return updatePermission(device, device != null && mUsbManager.hasPermission(device));
+		return device != null && mUsbManager.hasPermission(device);
 	}
 
 	/**
@@ -491,7 +491,8 @@ public final class USBMonitor {
 				}
 			} else if (UsbManager.ACTION_USB_DEVICE_ATTACHED.equals(action)) {
 				final UsbDevice device = intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
-				updatePermission(device, hasPermission(device));
+				//updatePermission(device, hasPermission(device));
+				mUsbManager.requestPermission(device,mPermissionIntent);
 				processAttach(device);
 			} else if (UsbManager.ACTION_USB_DEVICE_DETACHED.equals(action)) {
 				// when device removed
