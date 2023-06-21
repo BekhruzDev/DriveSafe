@@ -18,6 +18,10 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
+        ndk{
+            abiFilters 'armeabi-v7a','arm64-v8a'
+        }
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,7 +45,7 @@ android {
     }
 }
 dependencies {
-
+    api fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.9.0'
@@ -78,6 +82,9 @@ dependencies {
     //Usb camera libs
     implementation project(':libuvccamera')
     implementation project(':usbCameraCommon')
+
+    //USB camera
+    implementation 'com.serenegiant:common:4.1.1'
 
 }
 configurations {

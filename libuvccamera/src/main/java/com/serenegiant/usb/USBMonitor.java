@@ -43,6 +43,7 @@ import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
+import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
@@ -91,7 +92,7 @@ public final class USBMonitor {
 		 * called when device dettach(after onDisconnect)
 		 * @param device
 		 */
-		public void onDettach(UsbDevice device);
+		public void onDetach(UsbDevice device);
 		/**
 		 * called after device opend
 		 * @param device
@@ -170,6 +171,7 @@ public final class USBMonitor {
 				mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
 				final IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
 				// ACTION_USB_DEVICE_ATTACHED never comes on some devices so it should not be added here
+				filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
 				filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
 				context.registerReceiver(mUsbReceiver, filter);
 			}
@@ -607,7 +609,7 @@ public final class USBMonitor {
 			mAsyncHandler.post(new Runnable() {
 				@Override
 				public void run() {
-					mOnDeviceConnectListener.onDettach(device);
+					mOnDeviceConnectListener.onDetach(device);
 				}
 			});
 		}
@@ -894,7 +896,9 @@ public final class USBMonitor {
 				info.serial = device.getSerialNumber();
 			}
 			if (BuildCheck.isMarshmallow()) {
-				info.usb_version = device.getVersion();
+				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+					info.usb_version = device.getVersion();
+				}
 			}
 			if ((manager != null) && manager.hasPermission(device)) {
 				final UsbDeviceConnection connection = manager.openDevice(device);

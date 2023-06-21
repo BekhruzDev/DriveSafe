@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         companion object {
-            private const val TAG = "MainActivity"
+            const val TAG = "MainActivity"
             private const val PERMISSION_REQUESTS = 1
             private val REQUIRED_RUNTIME_PERMISSIONS =
                 arrayOf(
