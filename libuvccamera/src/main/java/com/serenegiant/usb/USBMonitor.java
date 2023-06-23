@@ -165,13 +165,20 @@ public final class USBMonitor {
 	public synchronized void register() throws IllegalStateException {
 		if (destroyed) throw new IllegalStateException("already destroyed");
 		if (mPermissionIntent == null) {
-			if (DEBUG) Log.i(TAG, "register:");
 			final Context context = mWeakContext.get();
 			if (context != null) {
-				mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
+				if (Build.VERSION.SDK_INT >= 31) {
+					// avoid acquiring intent data failed in receiver on Android12
+					// when using PendingIntent.FLAG_IMMUTABLE
+					// because it means Intent can't be modified anywhere -- jiangdg/20220929
+					int PENDING_FLAG_IMMUTABLE = 1<<25;
+					mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), PENDING_FLAG_IMMUTABLE);
+				} else {
+					mPermissionIntent = PendingIntent.getBroadcast(context, 0, new Intent(ACTION_USB_PERMISSION), 0);
+				}
 				final IntentFilter filter = new IntentFilter(ACTION_USB_PERMISSION);
 				// ACTION_USB_DEVICE_ATTACHED never comes on some devices so it should not be added here
-				filter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+				filter.addAction(ACTION_USB_DEVICE_ATTACHED);
 				filter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
 				context.registerReceiver(mUsbReceiver, filter);
 			}
@@ -1021,7 +1028,15 @@ public final class USBMonitor {
 			}
 			mConnection = monitor.mUsbManager.openDevice(device);
 			if (mConnection == null) {
-				throw new IllegalStateException("device may already be removed or have no permission");
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				mConnection = monitor.mUsbManager.openDevice(device);
+				if (mConnection == null) {
+					throw new IllegalStateException("openDevice failed. device may already be removed or have no permission, dev = " + device);
+				}
 			}
 			mInfo = updateDeviceInfo(monitor.mUsbManager, device, null);
 			mWeakMonitor = new WeakReference<USBMonitor>(monitor);
@@ -1344,12 +1359,6 @@ public final class USBMonitor {
 			}
 			return super.equals(o);
 		}
-
-//		@Override
-//		protected void finalize() throws Throwable {
-///			close();
-//			super.finalize();
-//		}
 
 		private synchronized void checkConnection() throws IllegalStateException {
 			if (mConnection == null) {
