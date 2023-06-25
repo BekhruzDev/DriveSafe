@@ -16,34 +16,34 @@
 
 package com.example.drivesafe.ui.camerax_live_preview
 
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.widget.*
-import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import androidx.camera.core.*
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
-import com.example.drivesafe.mlkit_utils.GraphicOverlay
-import com.example.drivesafe.R
-import com.example.drivesafe.mlkit_utils.VisionImageProcessor
+import com.example.drivesafe.databinding.ActivityVisionCameraxLivePreviewBinding
 import com.example.drivesafe.facedetector.FaceDetectorProcessor
+import com.example.drivesafe.facedetector.OnFaceActions
+import com.example.drivesafe.mlkit_utils.GraphicOverlay
+import com.example.drivesafe.mlkit_utils.VisionImageProcessor
 import com.example.drivesafe.preference.PreferenceUtils
-import com.example.drivesafe.ui.SettingsActivity
+import com.example.drivesafe.ui.base.BaseActivity
 import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException
+import com.google.mlkit.vision.face.Face
 import dagger.hilt.android.AndroidEntryPoint
 
 /** Live preview demo app for ML Kit APIs using CameraX. */
 @KeepName
 @AndroidEntryPoint
-class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, CompoundButton.OnCheckedChangeListener {
+class CameraXLivePreviewActivity: BaseActivity<ActivityVisionCameraxLivePreviewBinding>(ActivityVisionCameraxLivePreviewBinding::inflate){
 
     private val cameraXViewModel: CameraXViewModel by viewModels()
     private var previewView: PreviewView? = null
@@ -54,43 +54,39 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
     private var imageProcessor: VisionImageProcessor? = null
     private var needUpdateGraphicOverlayImageSourceInfo = false
     private var selectedModel = FACE_DETECTION
-    private var lensFacing = CameraSelector.LENS_FACING_BACK
+    private var lensFacing = CameraSelector.LENS_FACING_FRONT
     private var cameraSelector: CameraSelector? = null
+    private var onFaceActions:OnFaceActions? = null
+    private var sleepStartTime = 0L
+    private var awakeStartTime = 0L
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Log.d(TAG, "onCreate")
-        val hasExtCamSupport =
-            packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_EXTERNAL)
-        Log.d("ExtCamSupport", "$hasExtCamSupport")
-        if (savedInstanceState != null) {
-            selectedModel = savedInstanceState.getString(STATE_SELECTED_MODEL, FACE_DETECTION)
-        }
         cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
-        setContentView(R.layout.activity_vision_camerax_live_preview)
-        previewView = findViewById(R.id.preview_view)
-        if (previewView == null) {
-            Log.d(TAG, "previewView is null")
-        }
-        graphicOverlay = findViewById(R.id.graphic_overlay)
-        if (graphicOverlay == null) {
-            Log.d(TAG, "graphicOverlay is null")
-        }
-        val facingSwitch = findViewById<ToggleButton>(R.id.facing_switch)
-        facingSwitch.setOnCheckedChangeListener(this)
+        previewView = binding.previewView
+        graphicOverlay = binding.graphicOverlay
+        initFaceActions()
         initCameraProvider()
-        val settingsButton = findViewById<ImageView>(R.id.settings_button)
-        settingsButton.setOnClickListener {
-            val intent = Intent(applicationContext, SettingsActivity::class.java)
-            intent.putExtra(
-                SettingsActivity.EXTRA_LAUNCH_SOURCE,
-                SettingsActivity.LaunchSource.CAMERAX_LIVE_PREVIEW
-            )
-            startActivity(intent)
-        }
-
         handleBackPressed()
+    }
+
+    private fun initFaceActions() {
+        onFaceActions = object :OnFaceActions{
+            override fun onFaceAvailable(face: Face) {
+                face.handleSleeping { isSleeping ->
+                    if (isSleeping){
+                        Log.d("EYE_ACTIVITY", "SLEEPING!!!!!")
+                    }
+                    else {
+                        Log.d("EYE_ACTIVITY", "NOT SLEEPING!!!!!")
+                    }
+
+                }
+            }
+
+        }
     }
 
 
@@ -102,69 +98,18 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
         Log.d(TAG, "Initialized CameraProvider")
     }
 
-    override fun onSaveInstanceState(bundle: Bundle) {
-        super.onSaveInstanceState(bundle)
-        bundle.putString(STATE_SELECTED_MODEL, selectedModel)
-    }
-
-    @Synchronized
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, pos: Int, id: Long) {
-        // An item was selected. You can retrieve the selected item using
-        // parent.getItemAtPosition(pos)
-        selectedModel = parent?.getItemAtPosition(pos).toString()
-        Log.d(TAG, "Selected model: $selectedModel")
-        bindAnalysisUseCase()
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-        // Do nothing.
-    }
-
-    override fun onCheckedChanged(buttonView: CompoundButton, isChecked: Boolean) {
-        if (cameraProvider == null) {
-            return
-        }
-        val newLensFacing =
-            if (lensFacing == CameraSelector.LENS_FACING_FRONT) {
-                CameraSelector.LENS_FACING_BACK
-            } else {
-                CameraSelector.LENS_FACING_FRONT
-            }
-        val newCameraSelector = CameraSelector.Builder().requireLensFacing(newLensFacing).build()
-        try {
-            if (cameraProvider!!.hasCamera(newCameraSelector)) {
-                Log.d(TAG, "Set facing to $newLensFacing")
-                lensFacing = newLensFacing
-                cameraSelector = newCameraSelector
-                bindAllCameraUseCases()
-                return
-            }
-        } catch (e: CameraInfoUnavailableException) {
-            // Falls through
-        }
-        Toast.makeText(
-            applicationContext,
-            "This device does not have lens with facing: $newLensFacing",
-            Toast.LENGTH_SHORT
-        )
-            .show()
-    }
-
     public override fun onResume() {
         super.onResume()
         bindAllCameraUseCases()
     }
-
     override fun onPause() {
         super.onPause()
         imageProcessor?.run { this.stop() }
     }
-
     public override fun onDestroy() {
         super.onDestroy()
         imageProcessor?.run { this.stop() }
     }
-
     private fun bindAllCameraUseCases() {
         if (cameraProvider != null) {
             // As required by CameraX API, unbinds all use cases before trying to re-bind any of them.
@@ -173,7 +118,6 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
             bindAnalysisUseCase()
         }
     }
-
     private fun bindPreviewUseCase() {
         if (!PreferenceUtils.isCameraLiveViewportEnabled(this)) {
             return
@@ -197,7 +141,6 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
             previewUseCase
         )
     }
-
     private fun bindAnalysisUseCase() {
         if (cameraProvider == null) {
             return
@@ -213,7 +156,7 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
                 if (selectedModel == FACE_DETECTION) {
                     Log.i(TAG, "Using Face Detector Processor")
                     val faceDetectorOptions = PreferenceUtils.getFaceDetectorOptions(this)
-                    FaceDetectorProcessor(this, faceDetectorOptions)
+                    FaceDetectorProcessor(this, faceDetectorOptions, onFaceActions)
                 } else throw IllegalStateException("Invalid model name")
             } catch (e: Exception) {
                 Log.e(TAG, "Can not create image processor: $selectedModel", e)
@@ -267,10 +210,40 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
                 }
             }
         )
-        cameraProvider!!.bindToLifecycle(/* lifecycleOwner= */ this,
+        cameraProvider!!.bindToLifecycle(/* lifecycleOwner = */ this,
             cameraSelector!!,
             analysisUseCase
         )
+    }
+
+
+
+    private fun Face.handleSleeping(action: (Boolean) -> Unit) {
+        queueEvent{
+            if (leftEyeOpenProbability != null && rightEyeOpenProbability != null) {
+                if (leftEyeOpenProbability!! <= 0.20f && rightEyeOpenProbability!! <= 0.20f) {
+                    awakeStartTime = 0L
+                    if (sleepStartTime == 0L) {
+                        sleepStartTime = System.currentTimeMillis()
+                    } else if (System.currentTimeMillis() - sleepStartTime >= SLEEP_TIMEOUT) {
+                        // User's eyes have been closed for at least 1 second
+                        // Do something here
+                        action.invoke(true)
+                    }
+                } else {
+                    sleepStartTime = 0L
+                    if (awakeStartTime == 0L) {
+                        awakeStartTime = System.currentTimeMillis()
+                    } else if (System.currentTimeMillis() - awakeStartTime >= AWAKE_TIMEOUT) {
+                        // User's eyes have been open for at least 1 second
+                        // Do something here
+                        action.invoke(false)
+                    }
+                    //stop Player
+                }
+            }
+        }
+
     }
     private fun handleBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
@@ -284,6 +257,7 @@ class CameraXLivePreviewActivity: AppCompatActivity(), OnItemSelectedListener, C
     companion object {
         private const val TAG = "CameraXLivePreview"
         private const val FACE_DETECTION = "Face Detection"
-        private const val STATE_SELECTED_MODEL = "selected_model"
+        private const val SLEEP_TIMEOUT = 1000L
+        private const val AWAKE_TIMEOUT = 1000L
     }
 }

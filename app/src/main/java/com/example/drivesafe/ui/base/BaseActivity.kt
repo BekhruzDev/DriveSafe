@@ -40,7 +40,7 @@ open class BaseActivity<VB:ViewBinding>(val inflater:(LayoutInflater) -> VB) : A
     }
 
 
-    fun queueEvent( delayMillis: Long, task: suspend () -> Unit,) {
+    fun queueEvent( delayMillis: Long = 0L, task: suspend () -> Unit,) {
         workerScope.launch {
             delay(delayMillis)
             task()
