@@ -193,7 +193,7 @@ abstract class VisionProcessorBase<T>(context: Context) : VisionImageProcessor {
         frameMetadata.width,
         frameMetadata.height,
         frameMetadata.rotation,
-        InputImage.IMAGE_FORMAT_NV21
+        InputImage.IMAGE_FORMAT_YV12
       ),
       graphicOverlay,
       bitmap,
@@ -342,7 +342,9 @@ abstract class VisionProcessorBase<T>(context: Context) : VisionImageProcessor {
           }
           this@VisionProcessorBase.onSuccess(results, graphicOverlay)
           if (!PreferenceUtils.shouldHideDetectionInfo(graphicOverlay.context)) {
-            graphicOverlay.add(
+            graphicOverlay.apply {
+             // setImageSourceInfo(originalCameraImage?.width?:0, originalCameraImage?.height?:0, false)
+              add(
               InferenceInfoGraphic(
                 graphicOverlay,
                 currentFrameLatencyMs,
@@ -350,6 +352,9 @@ abstract class VisionProcessorBase<T>(context: Context) : VisionImageProcessor {
                 if (shouldShowFps) framesPerSecond else null
               )
             )
+
+            }
+
           }
           graphicOverlay.postInvalidate()
         }

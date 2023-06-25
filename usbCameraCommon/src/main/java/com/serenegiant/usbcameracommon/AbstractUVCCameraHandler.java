@@ -23,6 +23,7 @@
 
 package com.serenegiant.usbcameracommon;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -39,6 +40,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.serenegiant.encoder.MediaAudioEncoder;
 import com.serenegiant.encoder.MediaEncoder;
@@ -356,6 +359,30 @@ abstract class AbstractUVCCameraHandler extends Handler {
 		private MediaMuxerWrapper mMuxer;
 		private MediaVideoBufferEncoder mVideoEncoder;
 
+
+
+		private IFrameCallback mCallback;
+		CameraThread(final Class<? extends AbstractUVCCameraHandler> clazz,
+					 final Activity parent, final CameraViewInterface cameraView, IFrameCallback frameCallback,
+					 final int encoderType, final int width, final int height, final int format,
+					 final float bandwidthFactor) {
+
+			super("CameraThread");
+			mHandlerClass = clazz;
+			mEncoderType = encoderType;
+			mWidth = width;
+			mHeight = height;
+			mPreviewMode = format;
+			mBandwidthFactor = bandwidthFactor;
+			mWeakParent = new WeakReference<Activity>(parent);
+			mWeakCameraView = new WeakReference<CameraViewInterface>(cameraView);
+			mCallback = frameCallback;
+			loadShutterSound(parent);
+		}
+
+
+
+
 		/**
 		 *
 		 * @param clazz Class extends AbstractUVCCameraHandler
@@ -444,6 +471,7 @@ abstract class AbstractUVCCameraHandler extends Handler {
 				camera.open(ctrlBlock);
 				synchronized (mSync) {
 					mUVCCamera = camera;
+					mUVCCamera.setFrameCallback(mCallback, UVCCamera.PIXEL_FORMAT_RGB565);
 				}
 				callOnOpen();
 			} catch (final Exception e) {
@@ -700,14 +728,16 @@ abstract class AbstractUVCCameraHandler extends Handler {
 		/**
 		 * prepare and load shutter sound for still image capturing
 		 */
+		@SuppressLint("SoonBlockedPrivateApi")
 		@SuppressWarnings("deprecation")
 		private void loadShutterSound(final Context context) {
 	    	// get system stream type using reflection
 	        int streamType;
 	        try {
 	            final Class<?> audioSystemClass = Class.forName("android.media.AudioSystem");
-	            final Field sseField = audioSystemClass.getDeclaredField("STREAM_SYSTEM_ENFORCED");
-	            streamType = sseField.getInt(null);
+	            final Field sseField;
+				sseField = audioSystemClass.getDeclaredField("STREAM_SYSTEM_ENFORCED");
+				streamType = sseField.getInt(null);
 	        } catch (final Exception e) {
 	        	streamType = AudioManager.STREAM_SYSTEM;	// set appropriate according to your app policy
 	        }

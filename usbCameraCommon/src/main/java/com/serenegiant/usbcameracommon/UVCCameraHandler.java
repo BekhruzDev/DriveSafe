@@ -25,6 +25,7 @@ package com.serenegiant.usbcameracommon;
 
 import android.app.Activity;
 
+import com.serenegiant.usb.IFrameCallback;
 import com.serenegiant.usb.UVCCamera;
 import com.serenegiant.widget.CameraViewInterface;
 
@@ -95,6 +96,24 @@ public class UVCCameraHandler extends AbstractUVCCameraHandler {
 	}
 
 	/**
+	 * create UVCCameraHandler, default bandwidth
+	 * @param parent
+	 * @param cameraView
+	 * @param frameCallback
+	 * @param encoderType 0: use MediaSurfaceEncoder, 1: use MediaVideoEncoder, 2: use MediaVideoBufferEncoder
+	 * @param width
+	 * @param height
+	 * @param format either UVCCamera.FRAME_FORMAT_YUYV(0) or UVCCamera.FRAME_FORMAT_MJPEG(1)
+	 * @return
+	 */
+	public static final UVCCameraHandler createHandler(
+			final Activity parent, final CameraViewInterface cameraView, IFrameCallback frameCallback,
+			final int encoderType, final int width, final int height, final int format) {
+
+		return createHandler(parent, cameraView, frameCallback, encoderType, width, height, format, UVCCamera.DEFAULT_BANDWIDTH);
+	}
+
+	/**
 	 * create UVCCameraHandler
 	 * @param parent
 	 * @param cameraView
@@ -110,6 +129,26 @@ public class UVCCameraHandler extends AbstractUVCCameraHandler {
 			final int encoderType, final int width, final int height, final int format, final float bandwidthFactor) {
 
 		final CameraThread thread = new CameraThread(UVCCameraHandler.class, parent, cameraView, encoderType, width, height, format, bandwidthFactor);
+		thread.start();
+		return (UVCCameraHandler)thread.getHandler();
+	}
+	/**
+	 * create UVCCameraHandler
+	 * @param parent
+	 * @param cameraView
+	 * @param frameCallback
+	 * @param encoderType 0: use MediaSurfaceEncoder, 1: use MediaVideoEncoder, 2: use MediaVideoBufferEncoder
+	 * @param width
+	 * @param height
+	 * @param format either UVCCamera.FRAME_FORMAT_YUYV(0) or UVCCamera.FRAME_FORMAT_MJPEG(1)
+	 * @param bandwidthFactor
+	 * @return
+	 */
+	public static final UVCCameraHandler createHandler(
+			final Activity parent, final CameraViewInterface cameraView,IFrameCallback frameCallback,
+			final int encoderType, final int width, final int height, final int format, final float bandwidthFactor) {
+
+		final CameraThread thread = new CameraThread(UVCCameraHandler.class, parent, cameraView, frameCallback, encoderType, width, height, format, bandwidthFactor);
 		thread.start();
 		return (UVCCameraHandler)thread.getHandler();
 	}
