@@ -33,7 +33,7 @@
             android:value="face" />
 
 
-           <activity
+       <!--    <activity
                android:name=".mlkit_utils.MainActivity"
                android:exported="true"
                android:theme="@style/AppTheme">
@@ -42,7 +42,7 @@
 
                    <category android:name="android.intent.category.LAUNCHER" />
                </intent-filter>
-           </activity>
+           </activity>-->
 
         <activity
             android:name=".ui.camerax_live_preview.CameraXLivePreviewActivity"
@@ -75,6 +75,15 @@
         <activity
             android:name=".ui.SettingsActivity"
             android:exported="false" />
+
+        <activity android:name=".ui.SampleActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
