@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.drivesafe.R
 import com.example.drivesafe.ui.camerax_live_preview.CameraXLivePreviewActivity
+import com.example.drivesafe.ui.live_preview.LivePreviewActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -26,12 +27,20 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.Main) {
             delay(4000)
             initCameraXActivity()
+            //initLivePreviewActivity()
             finish()
         }
     }
 
     private fun initCameraXActivity() {
         val intent = Intent(this, CameraXLivePreviewActivity::class.java)
+        startActivity(intent)
+        if (!allRuntimePermissionsGranted()) {
+            getRuntimePermissions()
+        }
+    }
+    private fun initLivePreviewActivity() {
+        val intent = Intent(this, LivePreviewActivity::class.java)
         startActivity(intent)
         if (!allRuntimePermissionsGranted()) {
             getRuntimePermissions()
