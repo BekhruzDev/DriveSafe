@@ -18,6 +18,7 @@ package com.example.drivesafe.ui.camerax_live_preview
 
 import android.os.Bundle
 import android.util.Log
+import android.util.Size
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
@@ -35,15 +36,19 @@ import com.example.drivesafe.mlkit_utils.GraphicOverlay
 import com.example.drivesafe.mlkit_utils.VisionImageProcessor
 import com.example.drivesafe.preference.PreferenceUtils
 import com.example.drivesafe.ui.base.BaseActivity
+import com.example.drivesafe.utils.view_utils.showToast
+import com.example.drivesafe.utils.view_utils.showToastLongTime
 import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.face.Face
+import com.serenegiant.utils.ThreadPool.queueEvent
 import dagger.hilt.android.AndroidEntryPoint
 
 /** Live preview demo app for ML Kit APIs using CameraX. */
 @KeepName
 @AndroidEntryPoint
-class CameraXLivePreviewActivity: BaseActivity<ActivityVisionCameraxLivePreviewBinding>(ActivityVisionCameraxLivePreviewBinding::inflate){
+class CameraXLivePreviewActivity :
+    BaseActivity<ActivityVisionCameraxLivePreviewBinding>(ActivityVisionCameraxLivePreviewBinding::inflate) {
 
     private val cameraXViewModel: CameraXViewModel by viewModels()
     private var previewView: PreviewView? = null
@@ -56,7 +61,7 @@ class CameraXLivePreviewActivity: BaseActivity<ActivityVisionCameraxLivePreviewB
     private var selectedModel = FACE_DETECTION
     private var lensFacing = CameraSelector.LENS_FACING_FRONT
     private var cameraSelector: CameraSelector? = null
-    private var onFaceActions:OnFaceActions? = null
+    private var onFaceActions: OnFaceActions? = null
     private var sleepStartTime = 0L
     private var awakeStartTime = 0L
 
@@ -73,13 +78,12 @@ class CameraXLivePreviewActivity: BaseActivity<ActivityVisionCameraxLivePreviewB
     }
 
     private fun initFaceActions() {
-        onFaceActions = object :OnFaceActions{
+        onFaceActions = object : OnFaceActions {
             override fun onFaceAvailable(face: Face) {
                 face.handleSleeping { isSleeping ->
-                    if (isSleeping){
+                    if (isSleeping) {
                         Log.d("EYE_ACTIVITY", "SLEEPING!!!!!")
-                    }
-                    else {
+                    } else {
                         Log.d("EYE_ACTIVITY", "NOT SLEEPING!!!!!")
                     }
 
@@ -102,14 +106,17 @@ class CameraXLivePreviewActivity: BaseActivity<ActivityVisionCameraxLivePreviewB
         super.onResume()
         bindAllCameraUseCases()
     }
+
     override fun onPause() {
         super.onPause()
         imageProcessor?.run { this.stop() }
     }
+
     public override fun onDestroy() {
         super.onDestroy()
         imageProcessor?.run { this.stop() }
     }
+
     private fun bindAllCameraUseCases() {
         if (cameraProvider != null) {
             // As required by CameraX API, unbinds all use cases before trying to re-bind any of them.
@@ -118,6 +125,7 @@ class CameraXLivePreviewActivity: BaseActivity<ActivityVisionCameraxLivePreviewB
             bindAnalysisUseCase()
         }
     }
+
     private fun bindPreviewUseCase() {
         if (!PreferenceUtils.isCameraLiveViewportEnabled(this)) {
             return
@@ -130,17 +138,16 @@ class CameraXLivePreviewActivity: BaseActivity<ActivityVisionCameraxLivePreviewB
         }
 
         val builder = Preview.Builder()
-        val targetResolution = PreferenceUtils.getCameraXTargetResolution(this, lensFacing)
-        if (targetResolution != null) {
-            builder.setTargetResolution(targetResolution)
-        }
+        builder.setTargetResolution(Size(640, 480))
         previewUseCase = builder.build()
         previewUseCase!!.setSurfaceProvider(previewView!!.surfaceProvider)
-        cameraProvider!!.bindToLifecycle(/* lifecycleOwner = */ this,
+        cameraProvider!!.bindToLifecycle(
+            this,
             cameraSelector!!,
             previewUseCase
         )
     }
+
     private fun bindAnalysisUseCase() {
         if (cameraProvider == null) {
             return
@@ -153,19 +160,12 @@ class CameraXLivePreviewActivity: BaseActivity<ActivityVisionCameraxLivePreviewB
         }
         imageProcessor =
             try {
-                if (selectedModel == FACE_DETECTION) {
-                    Log.i(TAG, "Using Face Detector Processor")
-                    val faceDetectorOptions = PreferenceUtils.getFaceDetectorOptions(this)
-                    FaceDetectorProcessor(this, faceDetectorOptions, onFaceActions)
-                } else throw IllegalStateException("Invalid model name")
+                Log.i(TAG, "Using Face Detector Processor")
+                val faceDetectorOptions = PreferenceUtils.getFaceDetectorOptions(this)
+                FaceDetectorProcessor(this, faceDetectorOptions, onFaceActions)
             } catch (e: Exception) {
                 Log.e(TAG, "Can not create image processor: $selectedModel", e)
-                Toast.makeText(
-                    applicationContext,
-                    "Can not create image processor: " + e.localizedMessage,
-                    Toast.LENGTH_LONG
-                )
-                    .show()
+                showToastLongTime("Can not create image processor: ")
                 return
             }
 
@@ -217,9 +217,8 @@ class CameraXLivePreviewActivity: BaseActivity<ActivityVisionCameraxLivePreviewB
     }
 
 
-
     private fun Face.handleSleeping(action: (Boolean) -> Unit) {
-        queueEvent{
+        queueEvent {
             if (leftEyeOpenProbability != null && rightEyeOpenProbability != null) {
                 if (leftEyeOpenProbability!! <= 0.20f && rightEyeOpenProbability!! <= 0.20f) {
                     awakeStartTime = 0L
@@ -245,6 +244,7 @@ class CameraXLivePreviewActivity: BaseActivity<ActivityVisionCameraxLivePreviewB
         }
 
     }
+
     private fun handleBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
