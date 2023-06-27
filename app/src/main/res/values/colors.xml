@@ -15,6 +15,10 @@
     <color name="primary_text">#333333</color>
     <color name="charcoal">#333333</color>
     <color name="green_600">#7CB342</color>
+    <color name="green_light_900">#33691E</color>
+    <color name="blue_light_800">#0277BD</color>
+    <color name="blue_800">#1565C0</color>
+    <color name="blue_700">#1976D2</color>
 
 
 </resources>

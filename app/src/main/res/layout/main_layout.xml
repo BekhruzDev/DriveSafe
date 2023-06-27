@@ -106,35 +106,62 @@
                 android:layout_marginBottom="25dp"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal">
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/btnPreview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:foreground="?selectableItemBackground"
-                    android:background="@drawable/bg_charcoal_8dp"
-                    android:fontFamily="@font/changa_medium"
-                    android:text="Preview"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white" />
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnEcoMode"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:layout_marginStart="30dp"
                     android:foreground="?selectableItemBackground"
                     android:background="@drawable/bg_green_8dp_selector"
                     android:fontFamily="@font/changa_medium"
                     android:text="Eco mode"
                     android:textAllCaps="false"
                     android:textColor="@color/white" />
-
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/btnTestUsb"
+                    android:layout_width="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_height="40dp"
+                    android:foreground="?selectableItemBackground"
+                    android:background="@drawable/bg_blue_8dp"
+                    android:fontFamily="@font/changa_medium"
+                    android:text="USB Camera"
+                    android:textAllCaps="false"
+                    android:textColor="@color/white" />
 
             </androidx.appcompat.widget.LinearLayoutCompat>
-
-
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.cardview.widget.CardView>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/llPreview"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?selectableItemBackground"
+        android:background="@drawable/bg_green_8dp_selector"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardView"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            app:tint="@color/white"
+            app:srcCompat="@drawable/ic_adjust_camera_48px"/>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/changa_medium"
+            android:layout_marginStart="12dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:text="Preview"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <include
         android:id="@+id/include"

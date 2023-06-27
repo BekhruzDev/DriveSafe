@@ -72,18 +72,16 @@ class CameraXLivePreviewActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
         graphicOverlay = binding.graphicOverlay
         initFaceActions()
-        //initCameraProvider()
         handleBackPressed()
 
     }
 
     override fun onInitUi() {
         super.onInitUi()
-        binding.btnPreview.setOnClickListener {
+        binding.llPreview.setOnClickListener {
             val intent = Intent(this, TestPreviewActivity::class.java)
             startActivity(intent)
         }
