@@ -86,6 +86,7 @@ class CameraXLivePreviewActivity :
             startActivity(intent)
         }
         binding.lvPowerBtn.apply {
+            playAnimation()
             if(cameraProvider == null){
                 this.setAnimation(R.raw.lottie_power_off_v3)
             }else{
@@ -101,6 +102,7 @@ class CameraXLivePreviewActivity :
                     cameraProvider = null
                     this.setAnimation(R.raw.lottie_power_off_v3)
                 }
+                resumeAnimation()
 
             }
         }
