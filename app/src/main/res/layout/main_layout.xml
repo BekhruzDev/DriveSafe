@@ -41,14 +41,31 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/lvPowerBtn"
-                android:layout_width="180dp"
-                android:layout_height="180dp"
-                android:layout_gravity="center_horizontal"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                app:lottie_rawRes="@raw/lottie_power_off" />
+            <FrameLayout
+                android:id="@+id/flPowerBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lvPowerOffBtn"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center_horizontal"
+                    app:lottie_autoPlay="true"
+                    android:visibility="gone"
+                    app:lottie_loop="true"
+
+                    app:lottie_rawRes="@raw/lottie_power_off_v3" />
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/lvPowerOnBtn"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:layout_gravity="center_horizontal"
+                    app:lottie_autoPlay="true"
+                    app:lottie_speed="1"
+                    app:lottie_loop="true"
+                    app:lottie_rawRes="@raw/lottie_power_on" />
+            </FrameLayout>
+
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
@@ -89,7 +106,7 @@
                     android:id="@+id/btnPreview"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:background="@drawable/bg_charcoal_8dp_selector"
+                    android:background="@drawable/bg_charcoal_8dp"
                     android:text="Preview"
                     android:fontFamily="@font/changa_medium"
                     android:textAllCaps="false"
@@ -112,4 +129,11 @@
 
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.cardview.widget.CardView>
+    <include layout="@layout/bottom_sheet_settings"
+        android:layout_width="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="100dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
