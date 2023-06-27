@@ -20,9 +20,15 @@ open class BaseActivity<VB:ViewBinding>(val inflater:(LayoutInflater) -> VB) : A
         setContentView(binding.root)
     }
 
+    override fun onStart() {
+        super.onStart()
+        onInitUi()
+    }
     override fun onPause() {
         super.onPause()
     }
+
+    open fun onInitUi(){}
 
     override fun onDestroy() {
         // Cancel all coroutines

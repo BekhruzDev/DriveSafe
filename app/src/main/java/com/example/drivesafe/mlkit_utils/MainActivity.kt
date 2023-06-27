@@ -11,6 +11,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.drivesafe.R
+import com.example.drivesafe.ui.TestPreviewActivity
 import com.example.drivesafe.ui.camerax_live_preview.CameraXLivePreviewActivity
 import com.example.drivesafe.ui.live_preview.LivePreviewActivity
 import dagger.hilt.android.AndroidEntryPoint
@@ -28,12 +29,20 @@ class MainActivity : AppCompatActivity() {
             delay(4000)
             initCameraXActivity()
             //initLivePreviewActivity()
+            //initTestPreviewActivity()
             finish()
         }
     }
 
     private fun initCameraXActivity() {
         val intent = Intent(this, CameraXLivePreviewActivity::class.java)
+        startActivity(intent)
+        if (!allRuntimePermissionsGranted()) {
+            getRuntimePermissions()
+        }
+    }
+    private fun initTestPreviewActivity() {
+        val intent = Intent(this, TestPreviewActivity::class.java)
         startActivity(intent)
         if (!allRuntimePermissionsGranted()) {
             getRuntimePermissions()

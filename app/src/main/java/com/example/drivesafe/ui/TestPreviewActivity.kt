@@ -1,22 +1,5 @@
-/*
- * Copyright 2020 Google LLC. All rights reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+package com.example.drivesafe.ui
 
-package com.example.drivesafe.ui.camerax_live_preview
-
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
@@ -30,29 +13,21 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
-import com.example.drivesafe.R
-import com.example.drivesafe.databinding.ActivityVisionCameraxLivePreviewBinding
-import com.example.drivesafe.databinding.MainLayoutBinding
+import com.example.drivesafe.databinding.ActivityTestPreviewBinding
 import com.example.drivesafe.facedetector.FaceDetectorProcessor
-import com.example.drivesafe.facedetector.OnFaceActions
 import com.example.drivesafe.mlkit_utils.GraphicOverlay
 import com.example.drivesafe.mlkit_utils.VisionImageProcessor
 import com.example.drivesafe.preference.PreferenceUtils
-import com.example.drivesafe.ui.TestPreviewActivity
 import com.example.drivesafe.ui.base.BaseActivity
-import com.example.drivesafe.utils.view_utils.showToast
+import com.example.drivesafe.ui.camerax_live_preview.CameraXViewModel
 import com.example.drivesafe.utils.view_utils.showToastLongTime
 import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException
-import com.google.mlkit.vision.face.Face
-import com.serenegiant.utils.ThreadPool.queueEvent
 import dagger.hilt.android.AndroidEntryPoint
 
-/** Live preview demo app for ML Kit APIs using CameraX. */
 @KeepName
 @AndroidEntryPoint
-class CameraXLivePreviewActivity :
-    BaseActivity<MainLayoutBinding>(MainLayoutBinding::inflate) {
+class TestPreviewActivity:BaseActivity<ActivityTestPreviewBinding>(ActivityTestPreviewBinding::inflate) {
 
     private val cameraXViewModel: CameraXViewModel by viewModels()
     private var previewView: PreviewView? = null
@@ -65,62 +40,14 @@ class CameraXLivePreviewActivity :
     private var selectedModel = FACE_DETECTION
     private var lensFacing = CameraSelector.LENS_FACING_FRONT
     private var cameraSelector: CameraSelector? = null
-    private var onFaceActions: OnFaceActions? = null
-    private var sleepStartTime = 0L
-    private var awakeStartTime = 0L
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
+        previewView = binding.previewView
         graphicOverlay = binding.graphicOverlay
-        initFaceActions()
-        //initCameraProvider()
-        handleBackPressed()
-
-    }
-
-    override fun onInitUi() {
-        super.onInitUi()
-        binding.btnPreview.setOnClickListener {
-            val intent = Intent(this, TestPreviewActivity::class.java)
-            startActivity(intent)
-        }
-        binding.lvPowerBtn.apply {
-            if(cameraProvider == null){
-                this.setAnimation(R.raw.lottie_power_off_v3)
-            }else{
-                this.setAnimation(R.raw.lottie_power_on)
-            }
-            setOnClickListener {
-                if(cameraProvider == null){
-                    initCameraProvider()
-                    this.setAnimation(R.raw.lottie_power_on)
-                }else{
-                    cameraProvider!!.unbindAll()
-                    imageProcessor?.run { this.stop() }
-                    cameraProvider = null
-                    this.setAnimation(R.raw.lottie_power_off_v3)
-                }
-
-            }
-        }
-    }
-
-    private fun initFaceActions() {
-        onFaceActions = object : OnFaceActions {
-            override fun onFaceAvailable(face: Face) {
-                face.handleSleeping { isSleeping ->
-                    if (isSleeping) {
-                        Log.d("EYE_ACTIVITY", "SLEEPING!!!!!")
-                    } else {
-                        Log.d("EYE_ACTIVITY", "NOT SLEEPING!!!!!")
-                    }
-                }
-            }
-
-        }
+        initCameraProvider()
     }
 
 
@@ -142,16 +69,18 @@ class CameraXLivePreviewActivity :
         imageProcessor?.run { this.stop() }
     }
 
+
     public override fun onDestroy() {
         super.onDestroy()
         imageProcessor?.run { this.stop() }
+        cameraXViewModel.getProcessCameraProvider()
     }
 
     private fun bindAllCameraUseCases() {
         if (cameraProvider != null) {
             // As required by CameraX API, unbinds all use cases before trying to re-bind any of them.
             cameraProvider!!.unbindAll()
-            //bindPreviewUseCase()
+            bindPreviewUseCase()
             bindAnalysisUseCase()
         }
     }
@@ -192,7 +121,7 @@ class CameraXLivePreviewActivity :
             try {
                 Log.i(TAG, "Using Face Detector Processor")
                 val faceDetectorOptions = PreferenceUtils.getFaceDetectorOptions(this)
-                FaceDetectorProcessor(this, faceDetectorOptions, onFaceActions)
+                FaceDetectorProcessor(this, faceDetectorOptions)
             } catch (e: Exception) {
                 Log.e(TAG, "Can not create image processor: $selectedModel", e)
                 showToastLongTime("Can not create image processor: ")
@@ -246,35 +175,6 @@ class CameraXLivePreviewActivity :
         )
     }
 
-
-    private fun Face.handleSleeping(action: (Boolean) -> Unit) {
-        queueEvent {
-            if (leftEyeOpenProbability != null && rightEyeOpenProbability != null) {
-                if (leftEyeOpenProbability!! <= 0.20f && rightEyeOpenProbability!! <= 0.20f) {
-                    awakeStartTime = 0L
-                    if (sleepStartTime == 0L) {
-                        sleepStartTime = System.currentTimeMillis()
-                    } else if (System.currentTimeMillis() - sleepStartTime >= SLEEP_TIMEOUT) {
-                        // User's eyes have been closed for at least 1 second
-                        // Do something here
-                        action.invoke(true)
-                    }
-                } else {
-                    sleepStartTime = 0L
-                    if (awakeStartTime == 0L) {
-                        awakeStartTime = System.currentTimeMillis()
-                    } else if (System.currentTimeMillis() - awakeStartTime >= AWAKE_TIMEOUT) {
-                        // User's eyes have been open for at least 1 second
-                        // Do something here
-                        action.invoke(false)
-                    }
-                    //stop Player
-                }
-            }
-        }
-
-    }
-
     private fun handleBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -287,7 +187,5 @@ class CameraXLivePreviewActivity :
     companion object {
         private const val TAG = "CameraXLivePreview"
         private const val FACE_DETECTION = "Face Detection"
-        private const val SLEEP_TIMEOUT = 1000L
-        private const val AWAKE_TIMEOUT = 1000L
     }
 }
