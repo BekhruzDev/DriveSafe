@@ -1,10 +1,12 @@
 package com.example.drivesafe.service
 
+import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
@@ -77,7 +79,7 @@ class DrowsinessDetectionService : LifecycleService() {
         val notification = NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Anti-Sleep is running...")
             //.setContentText("Service is running...")
-            .setSmallIcon(R.drawable.drivesafe_logo)
+            .setSmallIcon(R.drawable.ic_videocam)
            // .setContentIntent(contentIntent)
             .build()
 
