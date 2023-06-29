@@ -19,6 +19,11 @@
     <color name="blue_light_800">#0277BD</color>
     <color name="blue_800">#1565C0</color>
     <color name="blue_700">#1976D2</color>
+    <color name="red_200">#EF9A9A</color>
+    <color name="red_500">#F44336</color>
+    <color name="red_a700">#D50000</color>
+    <color name="orange_red_500">#FF5722</color>
+
 
 
 </resources>

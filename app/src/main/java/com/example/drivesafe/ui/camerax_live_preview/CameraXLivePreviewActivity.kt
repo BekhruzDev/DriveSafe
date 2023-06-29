@@ -97,8 +97,12 @@ class CameraXLivePreviewActivity :
         cameraXViewModel.isServiceBound.observe(this) { bound ->
             if (bound) {
                 binding.lvPowerBtn.setAnimation(R.raw.lottie_power_on)
+                binding.tvAntiSleepStatus.text = "running..."
+                binding.tvAntiSleepStatus.setTextColor(resources.getColor(R.color.green_600))
             } else {
                 binding.lvPowerBtn.setAnimation(R.raw.lottie_power_off_v3)
+                binding.tvAntiSleepStatus.text = "not active"
+                binding.tvAntiSleepStatus.setTextColor(resources.getColor(R.color.orange_red_500))
             }
             binding.lvPowerBtn.playAnimation()
             isBound = bound
