@@ -7,6 +7,7 @@ import android.view.Surface
 import com.example.drivesafe.databinding.ActivityUsbCameraLivePreviewBinding
 import com.example.drivesafe.base.BaseActivity
 import com.example.drivesafe.utils.view_utils.showToast
+import com.example.drivesafe.utils.view_utils.showToastLongTime
 import com.serenegiant.usb.USBMonitor
 import com.serenegiant.usb.USBMonitor.OnDeviceConnectListener
 import com.serenegiant.usbcameracommon.UVCCameraHandler
@@ -41,6 +42,7 @@ class UsbCameraLivePreviewActivity :
         super.onStart()
         usbMonitor?.register()
         binding.cameraView.onResume()
+        showToastLongTime("Please, connect USB Camera")
     }
 
     override fun onStop() {
@@ -64,11 +66,11 @@ class UsbCameraLivePreviewActivity :
     private fun initOnDeviceConnectedListener() {
         onDeviceConnectListener = object : OnDeviceConnectListener {
             override fun onAttach(device: UsbDevice?) {
-                showToast("onAttach: ${device?.deviceName} device")
+                //showToast("onAttach: ${device?.deviceName} device")
             }
 
             override fun onDetach(device: UsbDevice?) {
-                showToast("onDetach: ${device?.deviceName} device")
+                //showToast("onDetach: ${device?.deviceName} device")
             }
 
             override fun onConnect(
@@ -76,19 +78,19 @@ class UsbCameraLivePreviewActivity :
                 ctrlBlock: USBMonitor.UsbControlBlock?,
                 createNew: Boolean
             ) {
-                showToast("onConnect: ${device?.deviceName} device")
+                showToast("USB device is connected!")
                 cameraUvcHandler?.open(ctrlBlock)
                 startPreview()
 
             }
 
             override fun onDisconnect(device: UsbDevice?, ctrlBlock: USBMonitor.UsbControlBlock?) {
-                showToast("onDisconnect: ${device?.deviceName} device")
+                showToast("USB device is disconnected!")
                 queueEvent(0){ cameraUvcHandler?.close() }
             }
 
             override fun onCancel(device: UsbDevice?) {
-                showToast("onCancel: ${device?.deviceName} device")
+                //showToast("onCancel: ${device?.deviceName} device")
             }
 
         }

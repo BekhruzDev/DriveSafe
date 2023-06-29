@@ -44,6 +44,8 @@ import com.example.drivesafe.mlkit_utils.VisionImageProcessor
 import com.example.drivesafe.preference.PreferenceUtils
 import com.example.drivesafe.service.DrowsinessDetectionService
 import com.example.drivesafe.ui.TestPreviewActivity
+import com.example.drivesafe.ui.live_preview.LivePreviewActivity
+import com.example.drivesafe.ui.usb_camera_live_preview.UsbCameraLivePreviewActivity
 import com.example.drivesafe.utils.view_utils.showToastLongTime
 import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException
@@ -146,7 +148,14 @@ class CameraXLivePreviewActivity :
         binding.llEcoMode.setOnClickListener {
             moveTaskToBack(true)
         }
-
+        binding.llUsbCam.setOnClickListener {
+            if(isBound){
+                unbindService(connection)
+                cameraXViewModel.setServiceBound(false)
+            }
+            val intent = Intent(this, UsbCameraLivePreviewActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 

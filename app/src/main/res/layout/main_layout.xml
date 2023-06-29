@@ -133,32 +133,47 @@
                         android:textSize="14sp"
                         android:text="Eco mode"/>
                 </androidx.appcompat.widget.LinearLayoutCompat>
-                <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/llUsbCam"
+                <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
-                    android:clickable="true"
-                    android:paddingHorizontal="8dp"
                     android:layout_marginStart="30dp"
-                    android:focusable="true"
-                    android:foreground="?selectableItemBackground"
-                    android:background="@drawable/bg_blue_8dp"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        app:tint="@color/white"
-                        app:srcCompat="@drawable/ic_usb_camera_48px"/>
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/changa_medium"
-                        android:layout_marginStart="6dp"
-                        android:textColor="@color/white"
-                        android:textSize="14sp"
-                        android:text="Usb camera"/>
-                </androidx.appcompat.widget.LinearLayoutCompat>
+                    android:clickable="true"
+                    android:background="?selectableItemBackground"
+                    android:focusable="true">
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:id="@+id/llUsbCam"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingHorizontal="8dp"
+                        android:background="@drawable/bg_blue_8dp"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            app:tint="@color/white"
+                            app:srcCompat="@drawable/ic_usb_camera_48px"/>
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/changa_medium"
+                            android:layout_marginStart="6dp"
+                            android:textColor="@color/white"
+                            android:textSize="14sp"
+                            android:text="Usb camera"/>
+                    </androidx.appcompat.widget.LinearLayoutCompat>
+
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Test"
+                            android:textColor="@color/white"
+                            android:layout_marginEnd="8dp"
+                            android:layout_gravity="top|end"
+                            android:fontFamily="@font/changa_regular"
+                            android:textSize="10sp"/>
+                </FrameLayout>
+
 
             </androidx.appcompat.widget.LinearLayoutCompat>
         </androidx.appcompat.widget.LinearLayoutCompat>
