@@ -43,4 +43,11 @@ class CameraXViewModel
 
         return cameraProviderLiveData!!
     }
+
+    private val _isServiceBound = MutableLiveData<Boolean>()
+    val isServiceBound :LiveData<Boolean> get() = _isServiceBound
+
+    fun setServiceBound(bound: Boolean){
+        _isServiceBound.postValue(bound)
+    }
 }

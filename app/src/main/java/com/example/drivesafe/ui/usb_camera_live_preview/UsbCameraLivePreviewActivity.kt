@@ -5,7 +5,7 @@ import android.hardware.usb.UsbDevice
 import android.os.Bundle
 import android.view.Surface
 import com.example.drivesafe.databinding.ActivityUsbCameraLivePreviewBinding
-import com.example.drivesafe.ui.base.BaseActivity
+import com.example.drivesafe.base.BaseActivity
 import com.example.drivesafe.utils.view_utils.showToast
 import com.serenegiant.usb.USBMonitor
 import com.serenegiant.usb.USBMonitor.OnDeviceConnectListener

@@ -1,4 +1,4 @@
-package com.example.drivesafe.ui.base
+package com.example.drivesafe.base
 
 import android.os.Bundle
 import android.view.LayoutInflater

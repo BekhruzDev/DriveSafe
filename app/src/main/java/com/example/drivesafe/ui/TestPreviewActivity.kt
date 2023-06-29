@@ -18,7 +18,7 @@ import com.example.drivesafe.facedetector.FaceDetectorProcessor
 import com.example.drivesafe.mlkit_utils.GraphicOverlay
 import com.example.drivesafe.mlkit_utils.VisionImageProcessor
 import com.example.drivesafe.preference.PreferenceUtils
-import com.example.drivesafe.ui.base.BaseActivity
+import com.example.drivesafe.base.BaseActivity
 import com.example.drivesafe.ui.camerax_live_preview.CameraXViewModel
 import com.example.drivesafe.utils.view_utils.showToastLongTime
 import com.google.android.gms.common.annotation.KeepName
@@ -27,7 +27,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @KeepName
 @AndroidEntryPoint
-class TestPreviewActivity:BaseActivity<ActivityTestPreviewBinding>(ActivityTestPreviewBinding::inflate) {
+class TestPreviewActivity: BaseActivity<ActivityTestPreviewBinding>(ActivityTestPreviewBinding::inflate) {
 
     private val cameraXViewModel: CameraXViewModel by viewModels()
     private var previewView: PreviewView? = null

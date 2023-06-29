@@ -16,38 +16,41 @@
 
 package com.example.drivesafe.ui.camerax_live_preview
 
+import android.app.Service
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
+import android.provider.Settings
 import android.util.Log
 import android.util.Size
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageProxy
-import androidx.camera.core.Preview
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import com.example.drivesafe.R
-import com.example.drivesafe.databinding.ActivityVisionCameraxLivePreviewBinding
+import com.example.drivesafe.base.BaseActivity
+import com.example.drivesafe.base.BaseComponent.handleSleeping
 import com.example.drivesafe.databinding.MainLayoutBinding
 import com.example.drivesafe.facedetector.FaceDetectorProcessor
 import com.example.drivesafe.facedetector.OnFaceActions
 import com.example.drivesafe.mlkit_utils.GraphicOverlay
 import com.example.drivesafe.mlkit_utils.VisionImageProcessor
 import com.example.drivesafe.preference.PreferenceUtils
+import com.example.drivesafe.service.DrowsinessDetectionService
 import com.example.drivesafe.ui.TestPreviewActivity
-import com.example.drivesafe.ui.base.BaseActivity
-import com.example.drivesafe.utils.view_utils.showToast
 import com.example.drivesafe.utils.view_utils.showToastLongTime
 import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.face.Face
-import com.serenegiant.utils.ThreadPool.queueEvent
 import dagger.hilt.android.AndroidEntryPoint
 
+@ExperimentalGetImage
 /** Live preview demo app for ML Kit APIs using CameraX. */
 @KeepName
 @AndroidEntryPoint
@@ -66,9 +69,22 @@ class CameraXLivePreviewActivity :
     private var lensFacing = CameraSelector.LENS_FACING_FRONT
     private var cameraSelector: CameraSelector? = null
     private var onFaceActions: OnFaceActions? = null
-    private var sleepStartTime = 0L
-    private var awakeStartTime = 0L
+    private var drowsinessDetectionService: Service? = null
 
+
+    //connection with the Bound Service
+    private val connection = @ExperimentalGetImage object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName?, service: IBinder?) {
+            val binder = service as DrowsinessDetectionService.LocalBinder
+            drowsinessDetectionService = binder.getService()
+            cameraXViewModel.setServiceBound(true)
+        }
+
+        override fun onServiceDisconnected(className: ComponentName?) {
+            cameraXViewModel.setServiceBound(false)
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,48 +92,78 @@ class CameraXLivePreviewActivity :
         graphicOverlay = binding.graphicOverlay
         initFaceActions()
         handleBackPressed()
-
+        cameraXViewModel.isServiceBound.observe(this) { bound ->
+            if (bound) {
+                binding.lvPowerBtn.setAnimation(R.raw.lottie_power_on)
+            } else {
+                binding.lvPowerBtn.setAnimation(R.raw.lottie_power_off_v3)
+            }
+            binding.lvPowerBtn.playAnimation()
+            isBound = bound
+            Log.d("ISBOUND","$isBound")
+        }
     }
+
 
     override fun onInitUi() {
         super.onInitUi()
         binding.llPreview.setOnClickListener {
+            if(isBound){
+                unbindService(connection)
+                cameraXViewModel.setServiceBound(false)
+            }
             val intent = Intent(this, TestPreviewActivity::class.java)
             startActivity(intent)
         }
         binding.lvPowerBtn.apply {
             playAnimation()
-            if(cameraProvider == null){
-                this.setAnimation(R.raw.lottie_power_off_v3)
-            }else{
-                this.setAnimation(R.raw.lottie_power_on)
+            if (isBound) {
+                binding.lvPowerBtn.setAnimation(R.raw.lottie_power_on)
+            } else {
+                binding.lvPowerBtn.setAnimation(R.raw.lottie_power_off_v3)
             }
             setOnClickListener {
-                if(cameraProvider == null){
-                    initCameraProvider()
-                    this.setAnimation(R.raw.lottie_power_on)
-                }else{
-                    cameraProvider!!.unbindAll()
+                if (isBound) {
+                    cameraProvider?.unbindAll()
                     imageProcessor?.run { this.stop() }
                     cameraProvider = null
+                    unbindService(connection)
+                    cameraXViewModel.setServiceBound(false)
                     this.setAnimation(R.raw.lottie_power_off_v3)
+                } else {
+                    //initCameraProvider()
+                    val intent = Intent(
+                        this@CameraXLivePreviewActivity,
+                        DrowsinessDetectionService::class.java
+                    )
+                    bindService(intent, connection, Context.BIND_AUTO_CREATE)
+                    cameraXViewModel.setServiceBound(true)
+                    this.setAnimation(R.raw.lottie_power_on)
                 }
                 resumeAnimation()
-
             }
         }
+        binding.llEcoMode.setOnClickListener {
+            moveTaskToBack(true)
+        }
+
+
     }
+
 
     private fun initFaceActions() {
         onFaceActions = object : OnFaceActions {
             override fun onFaceAvailable(face: Face) {
-                face.handleSleeping { isSleeping ->
-                    if (isSleeping) {
-                        Log.d("EYE_ACTIVITY", "SLEEPING!!!!!")
-                    } else {
-                        Log.d("EYE_ACTIVITY", "NOT SLEEPING!!!!!")
+                queueEvent {
+                    face.handleSleeping { isSleeping ->
+                        if (isSleeping) {
+                            Log.d(TAG, "SLEEPING!!!!!")
+                        } else {
+                            Log.d(TAG, "NOT SLEEPING!!!!!")
+                        }
                     }
                 }
+
             }
 
         }
@@ -145,6 +191,8 @@ class CameraXLivePreviewActivity :
     public override fun onDestroy() {
         super.onDestroy()
         imageProcessor?.run { this.stop() }
+        unbindService(connection)
+        isBound = false
     }
 
     private fun bindAllCameraUseCases() {
@@ -247,34 +295,6 @@ class CameraXLivePreviewActivity :
     }
 
 
-    private fun Face.handleSleeping(action: (Boolean) -> Unit) {
-        queueEvent {
-            if (leftEyeOpenProbability != null && rightEyeOpenProbability != null) {
-                if (leftEyeOpenProbability!! <= 0.20f && rightEyeOpenProbability!! <= 0.20f) {
-                    awakeStartTime = 0L
-                    if (sleepStartTime == 0L) {
-                        sleepStartTime = System.currentTimeMillis()
-                    } else if (System.currentTimeMillis() - sleepStartTime >= SLEEP_TIMEOUT) {
-                        // User's eyes have been closed for at least 1 second
-                        // Do something here
-                        action.invoke(true)
-                    }
-                } else {
-                    sleepStartTime = 0L
-                    if (awakeStartTime == 0L) {
-                        awakeStartTime = System.currentTimeMillis()
-                    } else if (System.currentTimeMillis() - awakeStartTime >= AWAKE_TIMEOUT) {
-                        // User's eyes have been open for at least 1 second
-                        // Do something here
-                        action.invoke(false)
-                    }
-                    //stop Player
-                }
-            }
-        }
-
-    }
-
     private fun handleBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -287,7 +307,7 @@ class CameraXLivePreviewActivity :
     companion object {
         private const val TAG = "CameraXLivePreview"
         private const val FACE_DETECTION = "Face Detection"
-        private const val SLEEP_TIMEOUT = 1000L
-        private const val AWAKE_TIMEOUT = 1000L
+        private const val IS_SERVICE_BOUND = "isServiceBound"
+        private var isBound = false
     }
 }

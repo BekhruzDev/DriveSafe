@@ -95,6 +95,9 @@ dependencies {
     //Lottie
     implementation 'com.airbnb.android:lottie:6.0.1'
 
+    //Lifecycle-service
+    implementation 'androidx.lifecycle:lifecycle-service:2.6.1'
+
 }
 configurations {
     // Resolves dependency conflict caused by some dependencies use
