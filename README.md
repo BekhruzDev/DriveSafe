@@ -6,6 +6,8 @@ Android, Kotlin, Java, C, C++, Google ML (Machine Learning) kit, Face detection,
 
 # How to use
 
+All latest changes are in master branch.
+
 ![1](https://github.com/BekhruzDev/DriveSafeNew/assets/88543783/bec5b164-5a30-444f-b73f-75198b3e50ea)
 
 This is the off state of the detector. Before turning it on, click on the "Preview" button. Place and adjust your phone properly inside your car, and make sure that the phone's front camera is pointed to your face. 
@@ -21,7 +23,22 @@ While detection is running, if you want to save phone battery life, click on the
 
 If you prefer using external web camera, then click on the "USB Camera" button and plug in the USB Camera using (OTG) adapter. This feature is currently in TEST mode and therefore smartphones with Android 10 and below support this feature.
 
-Driver can choose which sound the app plays
-4. If flashlight option is turned on, flashlight also keeps blinking once detected sleepiness.
-5. With sleep timeout option in the settings, defines how many seconds after the driver falls asleep, the app should start alarm
-6. 
+
+
+If you pull up the "Settings", Settings window will appear
+
+![image](https://github.com/BekhruzDev/DriveSafeNew/assets/88543783/69441ef0-f531-4a8d-a9d6-1bec9a32d1af)
+
+Driver can choose which sound the app plays. [Police siren, Truck honk, Alarm siren]
+
+Sleep timeout option in the settings, defines after how many seconds after the driver falls asleep, the app should start alarming
+
+Turning on the "Use flashlight" option, enables the app to blink on and off the phone's flashlight once driver's sleepiness is detected.
+
+
+# Contact developer
+bekhruzabdullakhujaevpro@gmail.com
+
+# DriveSafe and Stay safe
+
+
