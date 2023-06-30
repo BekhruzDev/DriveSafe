@@ -73,7 +73,8 @@ class CameraXLivePreviewActivity :
     private var cameraSelector: CameraSelector? = null
     private var onFaceActions: OnFaceActions? = null
     private var drowsinessDetectionService: Service? = null
-
+    private var isPlaying = false
+    private var currentSound = 0
 
     //connection with the Bound Service
     private val connection = @ExperimentalGetImage object : ServiceConnection {
@@ -213,8 +214,16 @@ class CameraXLivePreviewActivity :
             }
             it.selected()
             AppPreferences.sound = AppPreferences.SOUND_SIREN
-            stopPlayer()
-            playSound(R.raw.sound_siren)
+
+            if(isPlaying && currentSound == R.raw.sound_siren){
+                stopPlayer()
+                isPlaying = false
+            }else{
+                stopPlayer()
+                playSound(R.raw.sound_siren)
+                currentSound = R.raw.sound_siren
+                isPlaying = true
+            }
 
         }
         binding.include.btnPoliceSiren.setOnClickListener {
@@ -223,8 +232,16 @@ class CameraXLivePreviewActivity :
             }
             it.selected()
             AppPreferences.sound = AppPreferences.SOUND_POLICE_SIREN
-            stopPlayer()
-            playSound(R.raw.sound_police_siren)
+            if(isPlaying && currentSound == R.raw.sound_police_siren){
+                stopPlayer()
+                isPlaying = false
+            }else{
+                stopPlayer()
+                playSound(R.raw.sound_police_siren)
+                currentSound = R.raw.sound_police_siren
+                isPlaying = true
+            }
+
         }
         binding.include.btnTruckSiren.setOnClickListener {
             binding.include.llSound.forEach { view ->
@@ -232,8 +249,15 @@ class CameraXLivePreviewActivity :
             }
             it.selected()
             AppPreferences.sound = AppPreferences.SOUND_TRUCK_HONK
-            stopPlayer()
-            playSound(R.raw.sound_truck_horn)
+            if(isPlaying && currentSound == R.raw.sound_truck_horn){
+                stopPlayer()
+                isPlaying = false
+            }else{
+                stopPlayer()
+                playSound(R.raw.sound_truck_horn)
+                currentSound = R.raw.sound_truck_horn
+                isPlaying = true
+            }
         }
     }
 
