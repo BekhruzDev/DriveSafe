@@ -33,6 +33,8 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import androidx.core.view.forEach
+import androidx.core.view.iterator
 import com.example.drivesafe.R
 import com.example.drivesafe.base.BaseActivity
 import com.example.drivesafe.base.BaseComponent.handleSleeping
@@ -48,6 +50,7 @@ import com.example.drivesafe.service.DrowsinessDetectionService
 import com.example.drivesafe.ui.TestPreviewActivity
 import com.example.drivesafe.ui.live_preview.LivePreviewActivity
 import com.example.drivesafe.ui.usb_camera_live_preview.UsbCameraLivePreviewActivity
+import com.example.drivesafe.utils.view_utils.selected
 import com.example.drivesafe.utils.view_utils.showToastLongTime
 import com.google.android.gms.common.annotation.KeepName
 import com.google.mlkit.common.MlKitException
@@ -108,7 +111,7 @@ class CameraXLivePreviewActivity :
             }
             binding.lvPowerBtn.playAnimation()
             isBound = bound
-            Log.d("ISBOUND","$isBound")
+            Log.d("ISBOUND", "$isBound")
         }
     }
 
@@ -116,7 +119,7 @@ class CameraXLivePreviewActivity :
     override fun onInitUi() {
         super.onInitUi()
         binding.llPreview.setOnClickListener {
-            if(isBound){
+            if (isBound) {
                 unbindService(connection)
                 cameraXViewModel.setServiceBound(false)
             }
@@ -155,7 +158,7 @@ class CameraXLivePreviewActivity :
             moveTaskToBack(true)
         }
         binding.llUsbCam.setOnClickListener {
-            if(isBound){
+            if (isBound) {
                 unbindService(connection)
                 cameraXViewModel.setServiceBound(false)
             }
@@ -169,8 +172,40 @@ class CameraXLivePreviewActivity :
                 AppPreferences.useFlashlight = isChecked
             }
         }
+        when(AppPreferences.sleepTimeOut){
+            500 -> binding.include.millis500.selected()
+            1000 -> binding.include.millis1000.selected()
+            1500 -> binding.include.millis1500.selected()
+        }
+        binding.include.millis500.setOnClickListener {
+            binding.include.llSleepTimeOut.forEach { view ->
+                view.isSelected = false
+            }
+            it.selected()
+            AppPreferences.sleepTimeOut = 500
 
+            Log.d("LOL","SleepTime out ${AppPreferences.sleepTimeOut}")
+        }
+        binding.include.millis1000.setOnClickListener {
+            binding.include.llSleepTimeOut.forEach { view ->
+                view.isSelected = false
+            }
+            it.selected()
+            AppPreferences.sleepTimeOut = 1000
 
+            Log.d("LOL","SleepTime out ${AppPreferences.sleepTimeOut}")
+        }
+        binding.include.millis1500.setOnClickListener {
+            binding.include.llSleepTimeOut.forEach { view ->
+                view.isSelected = false
+            }
+            it.selected()
+            AppPreferences.sleepTimeOut = 1500
+
+            Log.d("LOL","SleepTime out ${AppPreferences.sleepTimeOut}")
+        }
+
+        Log.d("LOL","SleepTime out ${AppPreferences.sleepTimeOut}")
     }
 
 

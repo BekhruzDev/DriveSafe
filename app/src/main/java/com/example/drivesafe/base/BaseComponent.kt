@@ -7,6 +7,7 @@ import android.os.Build
 import android.view.View
 import android.view.Window
 import androidx.annotation.RequiresApi
+import com.example.drivesafe.preference.AppPreferences
 import com.example.drivesafe.utils.view_utils.gone
 import com.example.drivesafe.utils.view_utils.show
 import com.google.mlkit.vision.face.Face
@@ -25,7 +26,7 @@ object BaseComponent {
                     awakeStartTime = 0L
                     if (sleepStartTime == 0L) {
                         sleepStartTime = System.currentTimeMillis()
-                    } else if (System.currentTimeMillis() - sleepStartTime >= SLEEP_TIMEOUT) {
+                    } else if (System.currentTimeMillis() - sleepStartTime >= AppPreferences.sleepTimeOut) { //TODO; USE CACHING WITH APP_PREFERENCES
                         // User's eyes have been closed for at least 1 second
                         // Do something here
                         action.invoke(true)
