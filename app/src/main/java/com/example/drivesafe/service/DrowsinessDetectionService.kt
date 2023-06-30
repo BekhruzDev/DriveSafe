@@ -1,18 +1,17 @@
 package com.example.drivesafe.service
 
-import android.annotation.SuppressLint
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Color
 import android.hardware.camera2.CameraManager
+import android.media.MediaPlayer
+import android.media.SoundPool
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import androidx.annotation.RawRes
 import androidx.annotation.RequiresApi
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
@@ -50,6 +49,9 @@ class DrowsinessDetectionService : LifecycleService() {
     private val workerScope = CoroutineScope(Dispatchers.Default)
     private var camera: Camera? = null
     private var cameraManager: CameraManager? = null
+    private var mediaPlayer:MediaPlayer? = null
+    @RawRes private var currentSound: Int = 0
+    private var isPlaying = false
 
     inner class LocalBinder : Binder() {
         fun getService(): DrowsinessDetectionService = this@DrowsinessDetectionService
@@ -59,6 +61,7 @@ class DrowsinessDetectionService : LifecycleService() {
         super.onCreate()
         initFaceDetector()
         initFaceActions()
+        initSound()
         cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
         cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
         cameraProviderFuture = ProcessCameraProvider.getInstance(this)
@@ -72,6 +75,14 @@ class DrowsinessDetectionService : LifecycleService() {
         }, ContextCompat.getMainExecutor(this))
 
 
+    }
+
+    private fun initSound() {
+        currentSound = when(AppPreferences.sound){
+            AppPreferences.SOUND_TRUCK_HONK -> R.raw.sound_truck_horn
+            AppPreferences.SOUND_SIREN -> R.raw.sound_siren
+            else -> R.raw.sound_police_siren
+        }
     }
 
     private fun initForegroundService() {
@@ -151,6 +162,7 @@ class DrowsinessDetectionService : LifecycleService() {
                     face.handleSleeping { isSleeping ->
                         if (isSleeping) {
                             Log.d(TAG, "SLEEPING!!!!!")
+                                playSound()
                             launch{
                                 if(AppPreferences.useFlashlight){
                                     cameraManager?.let{startFlashlight(it)}
@@ -158,7 +170,11 @@ class DrowsinessDetectionService : LifecycleService() {
                             }
                         } else {
                             Log.d(TAG, "NOT SLEEPING!!!!!")
+                            /*synchronized(face){
+                                stopSound(soundPool)
+                            }*/
                             launch {
+                              //  stopSound(soundPool)
                                 if(AppPreferences.useFlashlight) {
                                     cameraManager?.let { stopFlashlight(it) }
                                 }
@@ -219,8 +235,23 @@ class DrowsinessDetectionService : LifecycleService() {
     override fun onDestroy() {
         super.onDestroy()
         cameraProvider?.unbindAll()
+        mediaPlayer?.release()
     }
 
+    private fun playSound() {
+       if(mediaPlayer ==null){
+           mediaPlayer = MediaPlayer.create(this, currentSound)
+           mediaPlayer!!.setOnCompletionListener { stopPlayer() }
+       }
+        mediaPlayer!!.start()
+    }
+
+    fun stopPlayer() {
+        if (mediaPlayer != null) {
+            mediaPlayer!!.release()
+            mediaPlayer = null
+        }
+    }
 
     companion object {
         const val TAG = "DrowsinessDetection"

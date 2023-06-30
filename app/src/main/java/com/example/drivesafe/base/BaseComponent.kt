@@ -1,12 +1,15 @@
 package com.example.drivesafe.base
 
+import android.content.Context
 import android.graphics.Color
 import android.hardware.camera2.CameraAccessException
 import android.hardware.camera2.CameraManager
+import android.media.SoundPool
 import android.os.Build
 import android.view.View
 import android.view.Window
 import androidx.annotation.RequiresApi
+import com.example.drivesafe.R
 import com.example.drivesafe.preference.AppPreferences
 import com.example.drivesafe.utils.view_utils.gone
 import com.example.drivesafe.utils.view_utils.show
@@ -99,5 +102,7 @@ object BaseComponent {
     fun stopScreenLight(view: View){
         view.gone()
     }
+
+
 
 }

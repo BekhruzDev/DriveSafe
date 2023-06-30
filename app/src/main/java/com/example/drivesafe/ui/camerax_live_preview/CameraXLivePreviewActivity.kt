@@ -23,7 +23,6 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.provider.Settings
 import android.util.Log
 import android.util.Size
 import android.widget.Toast
@@ -34,11 +33,9 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
-import androidx.core.view.iterator
 import com.example.drivesafe.R
 import com.example.drivesafe.base.BaseActivity
 import com.example.drivesafe.base.BaseComponent.handleSleeping
-import com.example.drivesafe.base.BaseComponent.startFlashlight
 import com.example.drivesafe.databinding.MainLayoutBinding
 import com.example.drivesafe.facedetector.FaceDetectorProcessor
 import com.example.drivesafe.facedetector.OnFaceActions
@@ -48,7 +45,6 @@ import com.example.drivesafe.preference.AppPreferences
 import com.example.drivesafe.preference.PreferenceUtils
 import com.example.drivesafe.service.DrowsinessDetectionService
 import com.example.drivesafe.ui.TestPreviewActivity
-import com.example.drivesafe.ui.live_preview.LivePreviewActivity
 import com.example.drivesafe.ui.usb_camera_live_preview.UsbCameraLivePreviewActivity
 import com.example.drivesafe.utils.view_utils.selected
 import com.example.drivesafe.utils.view_utils.showToastLongTime
@@ -205,7 +201,40 @@ class CameraXLivePreviewActivity :
             Log.d("LOL","SleepTime out ${AppPreferences.sleepTimeOut}")
         }
 
-        Log.d("LOL","SleepTime out ${AppPreferences.sleepTimeOut}")
+
+        when(AppPreferences.sound){
+            AppPreferences.SOUND_SIREN -> binding.include.btnAlarmSiren.selected()
+            AppPreferences.SOUND_POLICE_SIREN -> binding.include.btnPoliceSiren.selected()
+            AppPreferences.SOUND_TRUCK_HONK -> binding.include.btnTruckSiren.selected()
+        }
+        binding.include.btnAlarmSiren.setOnClickListener {
+            binding.include.llSound.forEach { view ->
+                view.isSelected = false
+            }
+            it.selected()
+            AppPreferences.sound = AppPreferences.SOUND_SIREN
+            stopPlayer()
+            playSound(R.raw.sound_siren)
+
+        }
+        binding.include.btnPoliceSiren.setOnClickListener {
+            binding.include.llSound.forEach { view ->
+                view.isSelected = false
+            }
+            it.selected()
+            AppPreferences.sound = AppPreferences.SOUND_POLICE_SIREN
+            stopPlayer()
+            playSound(R.raw.sound_police_siren)
+        }
+        binding.include.btnTruckSiren.setOnClickListener {
+            binding.include.llSound.forEach { view ->
+                view.isSelected = false
+            }
+            it.selected()
+            AppPreferences.sound = AppPreferences.SOUND_TRUCK_HONK
+            stopPlayer()
+            playSound(R.raw.sound_truck_horn)
+        }
     }
 
 
@@ -361,6 +390,7 @@ class CameraXLivePreviewActivity :
         }
         this.onBackPressedDispatcher.addCallback(this, callback)
     }
+
 
     companion object {
         private const val TAG = "CameraXLivePreview"

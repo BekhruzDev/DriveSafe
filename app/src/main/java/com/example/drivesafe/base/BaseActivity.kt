@@ -1,5 +1,6 @@
 package com.example.drivesafe.base
 
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
@@ -12,6 +13,7 @@ open class BaseActivity<VB:ViewBinding>(val inflater:(LayoutInflater) -> VB) : A
     lateinit var binding: VB
     private val uiScope = CoroutineScope(Dispatchers.Main)
     private val workerScope = CoroutineScope(Dispatchers.Default)
+    private var mediaPlayer:MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,14 +28,20 @@ open class BaseActivity<VB:ViewBinding>(val inflater:(LayoutInflater) -> VB) : A
     }
     override fun onPause() {
         super.onPause()
+        stopPlayer()
     }
 
+    override fun onStop() {
+        super.onStop()
+        stopPlayer()
+    }
     open fun onInitUi(){}
 
     override fun onDestroy() {
         // Cancel all coroutines
         uiScope.cancel()
         workerScope.cancel()
+        stopPlayer()
         super.onDestroy()
     }
 
@@ -53,6 +61,20 @@ open class BaseActivity<VB:ViewBinding>(val inflater:(LayoutInflater) -> VB) : A
         }
     }
 
+     fun playSound(soundRawRes:Int) {
+        if(mediaPlayer ==null){
+            mediaPlayer = MediaPlayer.create(this, soundRawRes)
+            mediaPlayer!!.setOnCompletionListener { stopPlayer() }
+        }
+        mediaPlayer!!.start()
+    }
+
+    fun stopPlayer() {
+        if (mediaPlayer != null) {
+            mediaPlayer!!.release()
+            mediaPlayer = null
+        }
+    }
     companion object{
         const val TAG = "BaseActivity"
 
