@@ -1,14 +1,25 @@
 package com.example.drivesafe.base
 
+import android.graphics.Color
+import android.hardware.camera2.CameraAccessException
+import android.hardware.camera2.CameraManager
+import android.os.Build
+import android.view.View
+import android.view.Window
+import androidx.annotation.RequiresApi
+import com.example.drivesafe.utils.view_utils.gone
+import com.example.drivesafe.utils.view_utils.show
 import com.google.mlkit.vision.face.Face
+import kotlinx.coroutines.*
 
 object BaseComponent {
     private var sleepStartTime = 0L
     private var awakeStartTime = 0L
-    private val SLEEP_TIMEOUT = 1000L
-    private val AWAKE_TIMEOUT = 1000L
+    private const val SLEEP_TIMEOUT = 1000L
+    private const val AWAKE_TIMEOUT = 1000L
 
-    fun Face.handleSleeping(action: (Boolean) -> Unit) {
+    suspend fun Face.handleSleeping(action: (Boolean) -> Unit) {
+        withContext(Dispatchers.Default) {
             if (leftEyeOpenProbability != null && rightEyeOpenProbability != null) {
                 if (leftEyeOpenProbability!! <= 0.20f && rightEyeOpenProbability!! <= 0.20f) {
                     awakeStartTime = 0L
@@ -31,6 +42,61 @@ object BaseComponent {
                     //stop Player
                 }
             }
+        }
 
     }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    suspend fun startFlashlight(cameraManager: CameraManager) {
+        val cameraId = cameraManager.cameraIdList[0]
+        withContext(Dispatchers.Default) {
+            try {
+                cameraManager.setTorchMode(cameraId, true)
+                delay(500)
+                cameraManager.setTorchMode(cameraId, false)
+                delay(200)
+            } catch (e: CameraAccessException) {
+
+            }
+        }
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    suspend fun stopFlashlight(cameraManager: CameraManager) {
+        val cameraId = cameraManager.cameraIdList[0]
+        withContext(Dispatchers.Default) {
+            try {
+                cameraManager.setTorchMode(cameraId, false)
+            } catch (e: CameraAccessException) {
+            }
+        }
+    }
+
+    suspend fun startScreenLight(view: View, window: Window) {
+        withContext(Dispatchers.Main) {
+            view.show()
+            val params = window.attributes
+            params.screenBrightness = 1.0f // Set the screen brightness to maximum
+            window.attributes = params
+            launch {
+                var isScreenOn = false
+                while (true) {
+                    if (!isScreenOn) {
+                        view.setBackgroundColor(Color.WHITE) // Set the background color to white
+                        isScreenOn = true
+                    } else {
+                        view.setBackgroundColor(Color.BLACK) // Set the background color to black
+                        isScreenOn = false
+                    }
+                    delay(1000) // Blink every one second
+                }
+            }
+        }
+    }
+
+    fun stopScreenLight(view: View){
+        view.gone()
+    }
+
 }

@@ -6,22 +6,25 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.hardware.camera2.CameraManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ExperimentalGetImage
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.ImageProxy
+import androidx.annotation.RequiresApi
+import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleService
 import com.example.drivesafe.R
 import com.example.drivesafe.base.BaseComponent.handleSleeping
+import com.example.drivesafe.base.BaseComponent.startFlashlight
+import com.example.drivesafe.base.BaseComponent.stopFlashlight
 import com.example.drivesafe.facedetector.OnFaceActions
+import com.example.drivesafe.preference.AppPreferences
 import com.example.drivesafe.preference.PreferenceUtils
 import com.example.drivesafe.ui.camerax_live_preview.CameraXLivePreviewActivity
 import com.google.common.util.concurrent.ListenableFuture
@@ -30,9 +33,7 @@ import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.concurrent.ExecutionException
 
 
@@ -47,6 +48,8 @@ class DrowsinessDetectionService : LifecycleService() {
     private lateinit var faceDetector: FaceDetector
     private var onFaceActions: OnFaceActions? = null
     private val workerScope = CoroutineScope(Dispatchers.Default)
+    private var camera: Camera? = null
+    private var cameraManager: CameraManager? = null
 
     inner class LocalBinder : Binder() {
         fun getService(): DrowsinessDetectionService = this@DrowsinessDetectionService
@@ -56,9 +59,8 @@ class DrowsinessDetectionService : LifecycleService() {
         super.onCreate()
         initFaceDetector()
         initFaceActions()
-        cameraSelector = CameraSelector.Builder()
-            .requireLensFacing(CameraSelector.LENS_FACING_FRONT)
-            .build()
+        cameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
+        cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
         cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener({
             try {
@@ -134,7 +136,7 @@ class DrowsinessDetectionService : LifecycleService() {
             runFaceDetector(imageProxy)
         }
 
-        cameraProvider!!.bindToLifecycle(
+        camera = cameraProvider!!.bindToLifecycle(
             this@DrowsinessDetectionService,
             cameraSelector!!,
             imageAnalysis
@@ -143,13 +145,24 @@ class DrowsinessDetectionService : LifecycleService() {
 
     private fun initFaceActions() {
         onFaceActions = object : OnFaceActions {
+            @RequiresApi(Build.VERSION_CODES.M)
             override fun onFaceAvailable(face: Face) {
-                workerScope.launch {
+                workerScope.launch(SupervisorJob()) {
                     face.handleSleeping { isSleeping ->
                         if (isSleeping) {
                             Log.d(TAG, "SLEEPING!!!!!")
+                            launch{
+                                if(AppPreferences.useFlashlight){
+                                    cameraManager?.let{startFlashlight(it)}
+                                }
+                            }
                         } else {
                             Log.d(TAG, "NOT SLEEPING!!!!!")
+                            launch {
+                                if(AppPreferences.useFlashlight) {
+                                    cameraManager?.let { stopFlashlight(it) }
+                                }
+                            }
                         }
                     }
                 }
@@ -187,6 +200,7 @@ class DrowsinessDetectionService : LifecycleService() {
         }
 
     }
+
 
 
     override fun onBind(intent: Intent): IBinder {

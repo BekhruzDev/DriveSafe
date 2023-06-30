@@ -138,7 +138,6 @@
                     android:textColor="@color/charcoal"
                     android:fontFamily="@font/changa_semi_bold"
                     android:textSize="16sp"
-                    android:checked="true"
                     />
 
             </androidx.appcompat.widget.LinearLayoutCompat>

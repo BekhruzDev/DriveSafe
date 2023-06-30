@@ -36,11 +36,13 @@ import androidx.core.content.ContextCompat
 import com.example.drivesafe.R
 import com.example.drivesafe.base.BaseActivity
 import com.example.drivesafe.base.BaseComponent.handleSleeping
+import com.example.drivesafe.base.BaseComponent.startFlashlight
 import com.example.drivesafe.databinding.MainLayoutBinding
 import com.example.drivesafe.facedetector.FaceDetectorProcessor
 import com.example.drivesafe.facedetector.OnFaceActions
 import com.example.drivesafe.mlkit_utils.GraphicOverlay
 import com.example.drivesafe.mlkit_utils.VisionImageProcessor
+import com.example.drivesafe.preference.AppPreferences
 import com.example.drivesafe.preference.PreferenceUtils
 import com.example.drivesafe.service.DrowsinessDetectionService
 import com.example.drivesafe.ui.TestPreviewActivity
@@ -160,6 +162,14 @@ class CameraXLivePreviewActivity :
             val intent = Intent(this, UsbCameraLivePreviewActivity::class.java)
             startActivity(intent)
         }
+        binding.include.switchFlashlightBlink.apply {
+            isChecked = AppPreferences.useFlashlight
+            setOnCheckedChangeListener { switch, isChecked ->
+                switch.isChecked = isChecked
+                AppPreferences.useFlashlight = isChecked
+            }
+        }
+
 
     }
 
