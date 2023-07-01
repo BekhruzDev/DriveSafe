@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/control"/>
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
     <com.example.drivesafe.mlkit_utils.GraphicOverlay
         android:id="@+id/graphic_overlay"
@@ -22,7 +22,7 @@
         app:layout_constraintTop_toTopOf="@id/preview_view"
         app:layout_constraintBottom_toBottomOf="@id/preview_view"/>
 
-    <include
+   <!-- <include
         android:id="@+id/settings_button"
         layout="@layout/settings_style"
         android:layout_width="wrap_content"
@@ -46,6 +46,6 @@
             android:checked="false"
             android:textOff=""
             android:textOn=""/>
-    </LinearLayout>
+    </LinearLayout>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

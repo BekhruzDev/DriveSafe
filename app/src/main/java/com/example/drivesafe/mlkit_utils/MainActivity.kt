@@ -7,16 +7,21 @@ import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.camera.core.ExperimentalGetImage
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.drivesafe.R
-import com.example.drivesafe.camerax_live_preview.CameraXLivePreviewActivity
+import com.example.drivesafe.ui.TestPreviewActivity
+import com.example.drivesafe.ui.camerax_live_preview.CameraXLivePreviewActivity
+import com.example.drivesafe.ui.live_preview.LivePreviewActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.ArrayList
 
+@ExperimentalGetImage @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,12 +29,28 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch(Dispatchers.Main) {
             delay(4000)
             initCameraXActivity()
+            //initLivePreviewActivity()
+            //initTestPreviewActivity()
             finish()
         }
     }
 
     private fun initCameraXActivity() {
         val intent = Intent(this, CameraXLivePreviewActivity::class.java)
+        startActivity(intent)
+        if (!allRuntimePermissionsGranted()) {
+            getRuntimePermissions()
+        }
+    }
+    private fun initTestPreviewActivity() {
+        val intent = Intent(this, TestPreviewActivity::class.java)
+        startActivity(intent)
+        if (!allRuntimePermissionsGranted()) {
+            getRuntimePermissions()
+        }
+    }
+    private fun initLivePreviewActivity() {
+        val intent = Intent(this, LivePreviewActivity::class.java)
         startActivity(intent)
         if (!allRuntimePermissionsGranted()) {
             getRuntimePermissions()
@@ -77,13 +98,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         companion object {
-            private const val TAG = "MainActivity"
+            const val TAG = "MainActivity"
             private const val PERMISSION_REQUESTS = 1
             private val REQUIRED_RUNTIME_PERMISSIONS =
                 arrayOf(
                     Manifest.permission.CAMERA,
                     Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
                 )
         }
 

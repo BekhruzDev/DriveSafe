@@ -10,7 +10,10 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven{url "https://raw.github.com/saki4510t/libcommon/master/repository/"}
     }
 }
 rootProject.name = "DriveSafe"
 include ':app'
+include ':libuvccamera'
+include ':usbCameraCommon'

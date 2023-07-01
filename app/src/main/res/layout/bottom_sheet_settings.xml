@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/llSettings"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_bottom_sheet"
+    android:orientation="vertical"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="24dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tvSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/changa_semi_bold"
+        android:gravity="center_horizontal"
+        android:text="Settings"
+        android:textColor="@color/charcoal"
+        android:textSize="18sp" />
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:fillViewport="true">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/changa_semi_bold"
+                    android:text="Wake-up sound"
+                    android:textColor="@color/charcoal"
+                    android:textSize="16sp" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llSound"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnPoliceSiren"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:background="@drawable/bg_charcoal_checkbox_8dp_selector"
+                        android:fontFamily="@font/changa_regular"
+                        android:text="Police siren"
+                        android:textAllCaps="false"
+                        android:textColor="@drawable/color_checkbox_text_selector" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnTruckSiren"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="12dp"
+                        android:background="@drawable/bg_charcoal_checkbox_8dp_selector"
+                        android:fontFamily="@font/changa_regular"
+                        android:text="Truck honk"
+                        android:textAllCaps="false"
+                        android:textColor="@drawable/color_checkbox_text_selector" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/btnAlarmSiren"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="12dp"
+                        android:background="@drawable/bg_charcoal_checkbox_8dp_selector"
+                        android:fontFamily="@font/changa_regular"
+                        android:text="Alarm siren"
+                        android:textAllCaps="false"
+                        android:textColor="@drawable/color_checkbox_text_selector" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/changa_semi_bold"
+                    android:text="Sleep timeout"
+                    android:textColor="@color/charcoal"
+                    android:textSize="16sp" />
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llSleepTimeOut"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/millis_500"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:background="@drawable/bg_charcoal_checkbox_8dp_selector"
+                        android:fontFamily="@font/changa_regular"
+                        android:text="0.5 sec"
+                        android:textAllCaps="false"
+                        android:textColor="@drawable/color_checkbox_text_selector" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/millis_1000"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="12dp"
+                        android:background="@drawable/bg_charcoal_checkbox_8dp_selector"
+                        android:fontFamily="@font/changa_regular"
+                        android:text="1 sec"
+                        android:textAllCaps="false"
+                        android:textColor="@drawable/color_checkbox_text_selector" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        android:id="@+id/millis_1500"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginStart="12dp"
+                        android:background="@drawable/bg_charcoal_checkbox_8dp_selector"
+                        android:fontFamily="@font/changa_regular"
+                        android:text="1.5 sec"
+                        android:textAllCaps="false"
+                        android:textColor="@drawable/color_checkbox_text_selector" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_flashlight_blink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:fontFamily="@font/changa_semi_bold"
+                android:text="Use flashlight blink"
+                android:textColor="@color/charcoal"
+                android:textSize="16sp" />
+
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
