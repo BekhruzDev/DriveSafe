@@ -146,7 +146,7 @@ class DrowsinessDetectionService : LifecycleService() {
             runFaceDetector(imageProxy)
         }
 
-        camera = cameraProvider!!.bindToLifecycle(
+        cameraProvider?.bindToLifecycle(
             this@DrowsinessDetectionService,
             cameraSelector!!,
             imageAnalysis

@@ -52,6 +52,9 @@ import com.google.mlkit.common.MlKitException
 import com.google.mlkit.vision.face.Face
 import dagger.hilt.android.AndroidEntryPoint
 import com.bekhruzdev.drivesafe.R
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.analytics.ktx.logEvent
+import com.google.firebase.ktx.Firebase
 
 @ExperimentalGetImage
 /** Live preview demo app for ML Kit APIs using CameraX. */
@@ -97,6 +100,9 @@ class CameraXLivePreviewActivity :
         initFaceActions()
         handleBackPressed()
         cameraXViewModel.isServiceBound.observe(this) { bound ->
+            Firebase.analytics.logEvent ("detection"){
+                param("running", if(bound) "true" else "false")
+            }
             if (bound) {
                 binding.lvPowerBtn.setAnimation(R.raw.lottie_power_on)
                 binding.tvAntiSleepStatus.text = "running..."

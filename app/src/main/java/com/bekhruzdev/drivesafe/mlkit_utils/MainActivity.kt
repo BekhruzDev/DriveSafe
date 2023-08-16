@@ -15,6 +15,9 @@ import com.bekhruzdev.drivesafe.R
 import com.bekhruzdev.drivesafe.ui.TestPreviewActivity
 import com.bekhruzdev.drivesafe.ui.camerax_live_preview.CameraXLivePreviewActivity
 import com.bekhruzdev.drivesafe.ui.live_preview.LivePreviewActivity
+import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.analytics.ktx.analytics
+import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -25,6 +28,7 @@ import java.util.ArrayList
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Firebase.analytics.logEvent("open_app", null)
         setContentView(R.layout.activity_main)
         lifecycleScope.launch(Dispatchers.Main) {
             delay(4000)
