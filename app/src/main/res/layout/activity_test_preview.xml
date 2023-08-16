@@ -13,7 +13,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <com.example.drivesafe.mlkit_utils.GraphicOverlay
+    <com.bekhruzdev.drivesafe.mlkit_utils.GraphicOverlay
         android:id="@+id/graphic_overlay"
         android:layout_width="0dp"
         android:layout_height="0dp"

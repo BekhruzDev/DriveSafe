@@ -6,14 +6,13 @@ plugins {
 }
 
 android {
-    namespace 'com.example.drivesafe'
     compileSdk 33
 
     packagingOptions {
         resources.excludes += "DebugProbesKt.bin"
     }
     defaultConfig {
-        applicationId "com.example.drivesafe"
+        applicationId "com.bekhruzdev.drivesafe"
         minSdk 21
         targetSdk 33
         versionCode 1
