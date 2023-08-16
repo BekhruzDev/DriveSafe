@@ -42,6 +42,7 @@ render.experimental.xml
 
 # Google Services (e.g. APIs or Firebase)
 google-services.json
+app/google-services.json
 
 # Android Profiling
 *.hprof
@@ -49,6 +50,7 @@ google-services.json
 # built application files
 *.apk
 *.ap_
+*.aab
 
 # files for the dex VM
 *.dex
