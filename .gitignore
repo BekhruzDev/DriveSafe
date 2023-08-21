@@ -115,3 +115,5 @@ libuvccamera/src/main/libs
 .idea/scopes
 .idea/caches
 .idea/codeStyles
+
+app/release

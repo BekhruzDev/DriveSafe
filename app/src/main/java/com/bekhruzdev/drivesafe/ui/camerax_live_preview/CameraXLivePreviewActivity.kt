@@ -118,6 +118,7 @@ class CameraXLivePreviewActivity :
         }
     }
 
+    //TODO: ONLY PORTRAIT SCREEN SUPPORT
 
     override fun onInitUi() {
         super.onInitUi()
