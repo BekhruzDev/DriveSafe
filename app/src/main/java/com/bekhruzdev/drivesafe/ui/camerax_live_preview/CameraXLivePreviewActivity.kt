@@ -309,7 +309,7 @@ class CameraXLivePreviewActivity :
     public override fun onDestroy() {
         super.onDestroy()
         imageProcessor?.run { this.stop() }
-        unbindService(connection)
+      //  unbindService(connection)
         isBound = false
     }
 

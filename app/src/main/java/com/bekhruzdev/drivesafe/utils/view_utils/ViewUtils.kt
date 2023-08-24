@@ -23,6 +23,7 @@ import androidx.annotation.ColorRes
 import androidx.annotation.DrawableRes
 import androidx.annotation.IdRes
 import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,12 +38,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import kotlin.math.pow
 
-fun Context.showToast(message:String = "This is a toast message"){
-    Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
+fun Context.showToast(message: String = "This is a toast message") {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
 
-fun Context.showToastLongTime(message:String = "This is a toast message"){
-    Toast.makeText(this,message,Toast.LENGTH_LONG).show()
+fun Context.showToastLongTime(message: String = "This is a toast message") {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 }
 
 fun TextView.isEmpty(): Boolean = TextUtils.isEmpty(this.text.toString())
@@ -176,7 +177,6 @@ fun View.showAnim(duration: Long = 200) {
         .setInterpolator(DecelerateInterpolator())
         .setListener(null)
 }
-
 
 
 fun View.onClick(listener: View.OnClickListener) {
@@ -338,6 +338,7 @@ fun TextInputLayout.setErrorMess(isValid: Boolean, errorStringId: Int) {
         error = this.context.getString(errorStringId)
     }
 }
+
 fun animOnFinish(callback: () -> Unit): AnimatorListenerAdapter {
     return object : AnimatorListenerAdapter() {
         override fun onAnimationEnd(animation: Animator) {
@@ -346,6 +347,7 @@ fun animOnFinish(callback: () -> Unit): AnimatorListenerAdapter {
         }
     }
 }
+
 fun View.animateHSVBackground(
     colorFrom: Int,
     colorTo: Int,
@@ -771,4 +773,31 @@ fun TextView.setTextGradient(
         ), null, Shader.TileMode.REPEAT
     )
     this.paint.shader = textShader
+}
+
+
+fun showAlertDialog(
+    context: Context,
+    title: String,
+    message: String,
+    yesText:String = "Yes",
+    noText:String = "No",
+    yesClicked: (() -> Unit)? = null,
+    noClicked: (() -> Unit)? = null
+
+) {
+    val builder = AlertDialog.Builder(context)
+    builder
+        .setTitle(title)
+        .setMessage(message)
+        .setPositiveButton(yesText) { dialog, id ->
+            yesClicked?.invoke()
+            dialog.dismiss()
+        }
+        .setNegativeButton(noText) { dialog, id ->
+            noClicked?.invoke()
+            dialog.dismiss()
+        }
+    val alert = builder.create()
+    alert.show()
 }

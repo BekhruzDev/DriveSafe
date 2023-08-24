@@ -1,115 +1,134 @@
 package com.bekhruzdev.drivesafe.mlkit_utils
 
 import android.Manifest
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
+import android.widget.ProgressBar
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.ExperimentalGetImage
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.bekhruzdev.drivesafe.R
+import com.bekhruzdev.drivesafe.databinding.ActivityMainBinding
 import com.bekhruzdev.drivesafe.ui.TestPreviewActivity
 import com.bekhruzdev.drivesafe.ui.camerax_live_preview.CameraXLivePreviewActivity
 import com.bekhruzdev.drivesafe.ui.live_preview.LivePreviewActivity
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.bekhruzdev.drivesafe.utils.view_utils.manageVisibility
+import com.bekhruzdev.drivesafe.utils.view_utils.showAlertDialog
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.ktx.Firebase
+import com.serenegiant.utils.PermissionCheck.openSettings
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.ArrayList
 
-@ExperimentalGetImage @AndroidEntryPoint
+@ExperimentalGetImage
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding:ActivityMainBinding
+    @RequiresApi(Build.VERSION_CODES.M)
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        when (isGranted) {
+            true -> {
+                //permission granted
+                initCameraXActivity()
+            }
+            false -> {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE)) {
+                    //when denied for one time
+                    showAlertDialog(
+                        this,
+                        "Attention",
+                        "This app is heavily dependant on the device's camera to track sleepiness.\n" +
+                                "Please, grant camera permission to app.",
+                        yesClicked = ::requestCallPermissionWithSystemDialog,
+                        noClicked = ::finish
+                    )
+                } else {
+                    //when denied forever, open settings
+                    showAlertDialog(
+                        this,
+                        "Attention",
+                        "This app is heavily dependant on the device's camera to track sleepiness.\n" +
+                                "Please, open settings and grant camera permission to app.",
+                        yesText = "Open settings",
+                        yesClicked = {
+                            openSettings(this)
+                            finish()
+                        },
+                        noClicked = ::finish
+                    )
+
+                }
+            }
+        }
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.M)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
         Firebase.analytics.logEvent("open_app", null)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
         lifecycleScope.launch(Dispatchers.Main) {
-            delay(4000)
-            initCameraXActivity()
-            //initLivePreviewActivity()
-            //initTestPreviewActivity()
-            finish()
+            delay(3000)
+            requestCameraPermission(
+                onGranted = ::initCameraXActivity,
+                onDenied = {
+                    binding.progressBar.manageVisibility(false)
+                    requestCallPermissionWithSystemDialog()
+                }
+            )
         }
     }
 
     private fun initCameraXActivity() {
         val intent = Intent(this, CameraXLivePreviewActivity::class.java)
         startActivity(intent)
-        if (!allRuntimePermissionsGranted()) {
-            getRuntimePermissions()
-        }
+        finish()
     }
+
     private fun initTestPreviewActivity() {
         val intent = Intent(this, TestPreviewActivity::class.java)
         startActivity(intent)
-        if (!allRuntimePermissionsGranted()) {
-            getRuntimePermissions()
-        }
     }
+
     private fun initLivePreviewActivity() {
         val intent = Intent(this, LivePreviewActivity::class.java)
         startActivity(intent)
-        if (!allRuntimePermissionsGranted()) {
-            getRuntimePermissions()
+    }
+
+    private fun requestCameraPermission(
+        onGranted: () -> Unit = {},
+        onDenied: () -> Unit = {}
+    ) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                CAMERA_PERMISSION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            onGranted.invoke()
+        } else {
+            onDenied.invoke()
         }
     }
 
-    private fun allRuntimePermissionsGranted(): Boolean {
-            for (permission in REQUIRED_RUNTIME_PERMISSIONS) {
-                permission.let {
-                    if (!isPermissionGranted(this, it)) {
-                        return false
-                    }
-                }
-            }
-            return true
-        }
+    @RequiresApi(Build.VERSION_CODES.M)
+    private fun requestCallPermissionWithSystemDialog() {
+        requestPermissionLauncher.launch(CAMERA_PERMISSION)
+    }
 
-        private fun getRuntimePermissions() {
-            val permissionsToRequest = ArrayList<String>()
-            for (permission in REQUIRED_RUNTIME_PERMISSIONS) {
-                permission.let {
-                    if (!isPermissionGranted(this, it)) {
-                        permissionsToRequest.add(permission)
-                    }
-                }
-            }
-
-            if (permissionsToRequest.isNotEmpty()) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    permissionsToRequest.toTypedArray(),
-                    PERMISSION_REQUESTS
-                )
-            }
-        }
-
-        private fun isPermissionGranted(context: Context, permission: String): Boolean {
-            if (ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
-            ) {
-                Log.i(TAG, "Permission granted: $permission")
-                return true
-            }
-            Log.i(TAG, "Permission NOT granted: $permission")
-            return false
-        }
-
-        companion object {
-            const val TAG = "MainActivity"
-            private const val PERMISSION_REQUESTS = 1
-            private val REQUIRED_RUNTIME_PERMISSIONS =
-                arrayOf(
-                    Manifest.permission.CAMERA,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                )
-        }
+    companion object {
+        const val TAG = "MainActivity"
+        const val CAMERA_PERMISSION = Manifest.permission.CAMERA
+    }
 
 }
