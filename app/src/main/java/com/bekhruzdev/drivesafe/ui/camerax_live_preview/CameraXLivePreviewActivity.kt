@@ -40,6 +40,7 @@ import com.bekhruzdev.drivesafe.ui.TestPreviewActivity
 import com.bekhruzdev.drivesafe.ui.usb_camera_live_preview.UsbCameraLivePreviewActivity
 import com.bekhruzdev.drivesafe.utils.view_utils.manageVisibility
 import com.bekhruzdev.drivesafe.utils.view_utils.selected
+import com.bekhruzdev.drivesafe.utils.view_utils.showSnackBar
 import com.bekhruzdev.drivesafe.utils.view_utils.showToast
 import com.google.android.gms.common.annotation.KeepName
 import com.google.firebase.analytics.ktx.analytics
@@ -101,8 +102,7 @@ class CameraXLivePreviewActivity :
         super.onInitUi()
         binding.llPreview.setOnClickListener {
             if (isBound) {
-                unbindService(connection)
-                cameraXViewModel.setServiceBound(false)
+                stopDetectionService()
             }
             val intent = Intent(this, TestPreviewActivity::class.java)
             startActivity(intent)
@@ -116,29 +116,32 @@ class CameraXLivePreviewActivity :
             }
             setOnClickListener {
                 if (isBound) {
-                    unbindService(connection)
-                    cameraXViewModel.setServiceBound(false)
+                    stopDetectionService()
                     this.setAnimation(R.raw.lottie_power_off_v3)
                 } else {
-                    //initCameraProvider()
-                    val intent = Intent(
-                        this@CameraXLivePreviewActivity,
-                        DrowsinessDetectionService::class.java
-                    )
-                    bindService(intent, connection, Context.BIND_AUTO_CREATE)
-                    cameraXViewModel.setServiceBound(true)
+                    startDetectionService()
                     this.setAnimation(R.raw.lottie_power_on)
                 }
                 resumeAnimation()
             }
         }
         binding.llEcoMode.setOnClickListener {
-            moveTaskToBack(true)
+            if(isBound){
+                moveTaskToBack(true)
+            }else{
+                showSnackBar(
+                    view = binding.root,
+                    message = "You haven't started Anti-Sleep detection!",
+                    buttonText = "Start",
+                    buttonTextColor = resources.getColor(R.color.green_600)
+                ){
+                    startDetectionService()
+                }
+            }
         }
         binding.llUsbCam.setOnClickListener {
             if (isBound) {
-                unbindService(connection)
-                cameraXViewModel.setServiceBound(false)
+                stopDetectionService()
             }
             val intent = Intent(this, UsbCameraLivePreviewActivity::class.java)
             startActivity(intent)
@@ -234,6 +237,20 @@ class CameraXLivePreviewActivity :
                 isPlaying = true
             }
         }
+    }
+
+    private fun stopDetectionService() {
+        unbindService(connection)
+        cameraXViewModel.setServiceBound(false)
+    }
+
+    private fun startDetectionService() {
+        val intent = Intent(
+            this@CameraXLivePreviewActivity,
+            DrowsinessDetectionService::class.java
+        )
+        bindService(intent, connection, BIND_AUTO_CREATE)
+        cameraXViewModel.setServiceBound(true)
     }
 
     public override fun onDestroy() {

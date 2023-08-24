@@ -237,14 +237,15 @@ class DrowsinessDetectionService : LifecycleService() {
     private fun playSound() {
         if (mediaPlayer == null) {
             mediaPlayer = MediaPlayer.create(this, currentSound)
-            mediaPlayer!!.setOnCompletionListener { stopPlayer() }
+            mediaPlayer?.setOnCompletionListener { stopPlayer() }
+        }else{
+            mediaPlayer?.start()
         }
-        mediaPlayer!!.start()
     }
 
     fun stopPlayer() {
         if (mediaPlayer != null) {
-            mediaPlayer!!.release()
+            mediaPlayer?.release()
             mediaPlayer = null
         }
     }

@@ -19,10 +19,7 @@ import android.view.animation.Interpolator
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.IdRes
-import androidx.annotation.LayoutRes
+import androidx.annotation.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
@@ -236,7 +233,14 @@ inline fun View.snack(
     snack.f()
     snack.show()
 }
-
+fun showSnackBar(view: View, message: String, buttonText:String, @ColorInt buttonTextColor:Int, onButtonClick:()->Unit) {
+    val snackBar = Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+        .setAction(buttonText) {
+            onButtonClick.invoke()
+        }
+        .setActionTextColor(buttonTextColor)
+    snackBar.show()
+}
 fun TextView.stringText() = this.text.toString()
 fun TextView.clearText() {
     this.text = ""
