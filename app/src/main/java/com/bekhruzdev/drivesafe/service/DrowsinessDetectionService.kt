@@ -16,6 +16,7 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleService
 import com.bekhruzdev.drivesafe.base.BaseComponent.handleSleeping
 import com.bekhruzdev.drivesafe.base.BaseComponent.startFlashlight
@@ -31,6 +32,7 @@ import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.bekhruzdev.drivesafe.R
+import com.bekhruzdev.drivesafe.facedetector.OnSleepActions
 import kotlinx.coroutines.*
 import java.util.concurrent.ExecutionException
 
@@ -46,11 +48,11 @@ class DrowsinessDetectionService : LifecycleService() {
     private lateinit var faceDetector: FaceDetector
     private var onFaceActions: OnFaceActions? = null
     private val workerScope = CoroutineScope(Dispatchers.Default)
-    private var camera: Camera? = null
     private var cameraManager: CameraManager? = null
-    private var mediaPlayer:MediaPlayer? = null
-    @RawRes private var currentSound: Int = 0
-    private var isPlaying = false
+    private var mediaPlayer: MediaPlayer? = null
+    @RawRes
+    private var currentSound: Int = 0
+
 
     inner class LocalBinder : Binder() {
         fun getService(): DrowsinessDetectionService = this@DrowsinessDetectionService
@@ -77,7 +79,7 @@ class DrowsinessDetectionService : LifecycleService() {
     }
 
     private fun initSound() {
-        currentSound = when(AppPreferences.sound){
+        currentSound = when (AppPreferences.sound) {
             AppPreferences.SOUND_TRUCK_HONK -> R.raw.sound_truck_horn
             AppPreferences.SOUND_SIREN -> R.raw.sound_siren
             else -> R.raw.sound_police_siren
@@ -92,7 +94,7 @@ class DrowsinessDetectionService : LifecycleService() {
             .setContentTitle("Anti-Sleep is running...")
             //.setContentText("Service is running...")
             .setSmallIcon(R.drawable.ic_videocam)
-           // .setContentIntent(contentIntent)
+            // .setContentIntent(contentIntent)
             .build()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -161,20 +163,16 @@ class DrowsinessDetectionService : LifecycleService() {
                     face.handleSleeping { isSleeping ->
                         if (isSleeping) {
                             Log.d(TAG, "SLEEPING!!!!!")
-                                playSound()
-                            launch{
-                                if(AppPreferences.useFlashlight){
-                                    cameraManager?.let{startFlashlight(it)}
+                            playSound()
+                            launch {
+                                if (AppPreferences.useFlashlight) {
+                                    cameraManager?.let { startFlashlight(it) }
                                 }
                             }
                         } else {
                             Log.d(TAG, "NOT SLEEPING!!!!!")
-                            /*synchronized(face){
-                                stopSound(soundPool)
-                            }*/
                             launch {
-                              //  stopSound(soundPool)
-                                if(AppPreferences.useFlashlight) {
+                                if (AppPreferences.useFlashlight) {
                                     cameraManager?.let { stopFlashlight(it) }
                                 }
                             }
@@ -185,7 +183,6 @@ class DrowsinessDetectionService : LifecycleService() {
 
         }
     }
-
 
     private fun initFaceDetector() {
         val options = FaceDetectorOptions.Builder()
@@ -217,13 +214,13 @@ class DrowsinessDetectionService : LifecycleService() {
     }
 
 
-
     override fun onBind(intent: Intent): IBinder {
         super.onBind(intent)
         initForegroundService()
         return binder
 
     }
+
     override fun onUnbind(intent: Intent?): Boolean {
         // Stop the service from being in the foreground
         stopForeground(true)
@@ -238,10 +235,10 @@ class DrowsinessDetectionService : LifecycleService() {
     }
 
     private fun playSound() {
-       if(mediaPlayer ==null){
-           mediaPlayer = MediaPlayer.create(this, currentSound)
-           mediaPlayer!!.setOnCompletionListener { stopPlayer() }
-       }
+        if (mediaPlayer == null) {
+            mediaPlayer = MediaPlayer.create(this, currentSound)
+            mediaPlayer!!.setOnCompletionListener { stopPlayer() }
+        }
         mediaPlayer!!.start()
     }
 

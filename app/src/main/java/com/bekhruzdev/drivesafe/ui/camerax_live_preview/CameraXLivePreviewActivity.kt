@@ -24,38 +24,29 @@ import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import android.util.Size
-import android.widget.Toast
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.camera.core.*
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
-import androidx.core.content.ContextCompat
+import androidx.camera.core.ExperimentalGetImage
 import androidx.core.view.forEach
+import androidx.lifecycle.lifecycleScope
 import com.bekhruzdev.drivesafe.R
 import com.bekhruzdev.drivesafe.base.BaseActivity
-import com.bekhruzdev.drivesafe.base.BaseComponent.handleSleeping
 import com.bekhruzdev.drivesafe.databinding.MainLayoutBinding
-import com.bekhruzdev.drivesafe.facedetector.FaceDetectorProcessor
-import com.bekhruzdev.drivesafe.facedetector.OnFaceActions
-import com.bekhruzdev.drivesafe.mlkit_utils.GraphicOverlay
-import com.bekhruzdev.drivesafe.mlkit_utils.VisionImageProcessor
+import com.bekhruzdev.drivesafe.facedetector.OnSleepActions
 import com.bekhruzdev.drivesafe.preference.AppPreferences
-import com.bekhruzdev.drivesafe.preference.PreferenceUtils
 import com.bekhruzdev.drivesafe.service.DrowsinessDetectionService
 import com.bekhruzdev.drivesafe.ui.TestPreviewActivity
 import com.bekhruzdev.drivesafe.ui.usb_camera_live_preview.UsbCameraLivePreviewActivity
+import com.bekhruzdev.drivesafe.utils.view_utils.manageVisibility
 import com.bekhruzdev.drivesafe.utils.view_utils.selected
 import com.bekhruzdev.drivesafe.utils.view_utils.showToast
-import com.bekhruzdev.drivesafe.utils.view_utils.showToastLongTime
 import com.google.android.gms.common.annotation.KeepName
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
-import com.google.mlkit.common.MlKitException
-import com.google.mlkit.vision.face.Face
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
 @ExperimentalGetImage
 /** Live preview demo app for ML Kit APIs using CameraX. */
@@ -65,21 +56,11 @@ class CameraXLivePreviewActivity :
     BaseActivity<MainLayoutBinding>(MainLayoutBinding::inflate) {
 
     private val cameraXViewModel: CameraXViewModel by viewModels()
-    private var previewView: PreviewView? = null
-    private var graphicOverlay: GraphicOverlay? = null
-    private var cameraProvider: ProcessCameraProvider? = null
-    private var previewUseCase: Preview? = null
-    private var analysisUseCase: ImageAnalysis? = null
-    private var imageProcessor: VisionImageProcessor? = null
-    private var needUpdateGraphicOverlayImageSourceInfo = false
-    private var selectedModel = FACE_DETECTION
-    private var lensFacing = CameraSelector.LENS_FACING_FRONT
-    private var cameraSelector: CameraSelector? = null
-    private var onFaceActions: OnFaceActions? = null
     private var drowsinessDetectionService: Service? = null
     private var isPlaying = false
     private var currentSound = 0
     private var isPressedBackOnce = true
+    private var isBound = false
 
     //connection with the Bound Service
     private val connection = @ExperimentalGetImage object : ServiceConnection {
@@ -97,9 +78,6 @@ class CameraXLivePreviewActivity :
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
-        graphicOverlay = binding.graphicOverlay
-        initFaceActions()
         handleBackPressed()
         cameraXViewModel.isServiceBound.observe(this) { bound ->
             Firebase.analytics.logEvent("detection") {
@@ -138,9 +116,6 @@ class CameraXLivePreviewActivity :
             }
             setOnClickListener {
                 if (isBound) {
-                    cameraProvider?.unbindAll()
-                    imageProcessor?.run { this.stop() }
-                    cameraProvider = null
                     unbindService(connection)
                     cameraXViewModel.setServiceBound(false)
                     this.setAnimation(R.raw.lottie_power_off_v3)
@@ -261,41 +236,35 @@ class CameraXLivePreviewActivity :
         }
     }
 
-
-    private fun initFaceActions() {
-        onFaceActions = object : OnFaceActions {
-            override fun onFaceAvailable(face: Face) {
-                queueEvent {
-                    face.handleSleeping { isSleeping ->
-                        if (isSleeping) {
-                            Log.d(TAG, "SLEEPING!!!!!")
-                        } else {
-                            Log.d(TAG, "NOT SLEEPING!!!!!")
-                        }
-                    }
-                }
-
-            }
-
-        }
-    }
-
-    public override fun onResume() {
-        super.onResume()
-        bindAllCameraUseCases()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        imageProcessor?.run { this.stop() }
-    }
-
     public override fun onDestroy() {
         super.onDestroy()
-        imageProcessor?.run { this.stop() }
         isBound = false
     }
 
+
+    private fun handleBackPressed() {
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (isPressedBackOnce) {
+                    isPressedBackOnce = false
+                    showToast("Press back button again to exit")
+                    queueEvent(2500) {
+                        isPressedBackOnce = true
+                    }
+                } else {
+                    finish()
+                }
+            }
+        }
+        this.onBackPressedDispatcher.addCallback(this, callback)
+    }
+
+
+    companion object {
+        private const val TAG = "CameraXLivePreview"
+    }
+
+    /*
     private fun bindAllCameraUseCases() {
         if (cameraProvider != null) {
             // As required by CameraX API, unbinds all use cases before trying to re-bind any of them.
@@ -389,35 +358,14 @@ class CameraXLivePreviewActivity :
                 }
             }
         )
-        cameraProvider!!.bindToLifecycle(/* lifecycleOwner = */ this,
+        cameraProvider!!.bindToLifecycle(*/
+/* lifecycleOwner = *//*
+ this,
             cameraSelector!!,
             analysisUseCase
         )
     }
 
+*/
 
-    private fun handleBackPressed() {
-        val callback = object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (isPressedBackOnce) {
-                    isPressedBackOnce = false
-                    showToast("Press back button again to exit")
-                    queueEvent(2500) {
-                        isPressedBackOnce = true
-                    }
-                } else {
-                    finish()
-                }
-            }
-        }
-        this.onBackPressedDispatcher.addCallback(this, callback)
-    }
-
-
-    companion object {
-        private const val TAG = "CameraXLivePreview"
-        private const val FACE_DETECTION = "Face Detection"
-        private const val IS_SERVICE_BOUND = "isServiceBound"
-        private var isBound = false
-    }
 }
