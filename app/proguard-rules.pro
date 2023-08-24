@@ -19,3 +19,6 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-printconfiguration /tmp/full-r8-config.txt
+-keepattributes LineNumberTable,SourceFile
+-renamesourcefileattribute SourceFile

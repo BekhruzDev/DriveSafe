@@ -19,10 +19,8 @@ import android.view.animation.Interpolator
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.annotation.ColorRes
-import androidx.annotation.DrawableRes
-import androidx.annotation.IdRes
-import androidx.annotation.LayoutRes
+import androidx.annotation.*
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,12 +35,12 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import kotlin.math.pow
 
-fun Context.showToast(message:String = "This is a toast message"){
-    Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
+fun Context.showToast(message: String = "This is a toast message") {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
 
-fun Context.showToastLongTime(message:String = "This is a toast message"){
-    Toast.makeText(this,message,Toast.LENGTH_LONG).show()
+fun Context.showToastLongTime(message: String = "This is a toast message") {
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 }
 
 fun TextView.isEmpty(): Boolean = TextUtils.isEmpty(this.text.toString())
@@ -178,7 +176,6 @@ fun View.showAnim(duration: Long = 200) {
 }
 
 
-
 fun View.onClick(listener: View.OnClickListener) {
     this.setOnClickListener { listener.onClick(this) }
 }
@@ -236,7 +233,14 @@ inline fun View.snack(
     snack.f()
     snack.show()
 }
-
+fun showSnackBar(view: View, message: String, buttonText:String, @ColorInt buttonTextColor:Int, onButtonClick:()->Unit) {
+    val snackBar = Snackbar.make(view, message, Snackbar.LENGTH_LONG)
+        .setAction(buttonText) {
+            onButtonClick.invoke()
+        }
+        .setActionTextColor(buttonTextColor)
+    snackBar.show()
+}
 fun TextView.stringText() = this.text.toString()
 fun TextView.clearText() {
     this.text = ""
@@ -338,6 +342,7 @@ fun TextInputLayout.setErrorMess(isValid: Boolean, errorStringId: Int) {
         error = this.context.getString(errorStringId)
     }
 }
+
 fun animOnFinish(callback: () -> Unit): AnimatorListenerAdapter {
     return object : AnimatorListenerAdapter() {
         override fun onAnimationEnd(animation: Animator) {
@@ -346,6 +351,7 @@ fun animOnFinish(callback: () -> Unit): AnimatorListenerAdapter {
         }
     }
 }
+
 fun View.animateHSVBackground(
     colorFrom: Int,
     colorTo: Int,
@@ -771,4 +777,31 @@ fun TextView.setTextGradient(
         ), null, Shader.TileMode.REPEAT
     )
     this.paint.shader = textShader
+}
+
+
+fun showAlertDialog(
+    context: Context,
+    title: String,
+    message: String,
+    yesText:String = "Yes",
+    noText:String = "No",
+    yesClicked: (() -> Unit)? = null,
+    noClicked: (() -> Unit)? = null
+
+) {
+    val builder = AlertDialog.Builder(context)
+    builder
+        .setTitle(title)
+        .setMessage(message)
+        .setPositiveButton(yesText) { dialog, id ->
+            yesClicked?.invoke()
+            dialog.dismiss()
+        }
+        .setNegativeButton(noText) { dialog, id ->
+            noClicked?.invoke()
+            dialog.dismiss()
+        }
+    val alert = builder.create()
+    alert.show()
 }

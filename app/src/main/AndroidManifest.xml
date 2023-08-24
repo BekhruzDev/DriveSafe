@@ -39,7 +39,9 @@
            <activity
                android:name=".mlkit_utils.MainActivity"
                android:exported="true"
-               android:theme="@style/AppTheme">
+               android:theme="@style/AppTheme"
+               android:configChanges="orientation"
+               android:screenOrientation="portrait">
                <intent-filter>
                    <action android:name="android.intent.action.MAIN" />
 
@@ -50,24 +52,32 @@
         <activity
             android:name=".ui.camerax_live_preview.CameraXLivePreviewActivity"
             android:exported="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".ui.live_preview.LivePreviewActivity"
             android:exported="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".ui.TestPreviewActivity"
             android:exported="true"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
         </activity>
 
 
         <activity
             android:name=".ui.usb_camera_live_preview.UsbCameraLivePreviewActivity"
             android:exported="true"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
             </intent-filter>
@@ -82,10 +92,14 @@
 
         <activity
             android:name=".ui.SettingsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".ui.SampleActivity"
-            android:exported="true">
+            android:exported="true"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
         </activity>
 
         <service android:name=".service.DrowsinessDetectionService" />

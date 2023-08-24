@@ -25,17 +25,17 @@ apply plugin: 'com.android.library'
 import org.apache.tools.ant.taskdefs.condition.Os
 
 android {
-	compileSdk 33
+	compileSdk ConfigData.compileSdk
 
 	compileOptions {
 		sourceCompatibility JavaVersion.VERSION_1_8
 		targetCompatibility JavaVersion.VERSION_1_8
 	}
     defaultConfig {
-		minSdk 21
-		targetSdk 33
-		versionCode 1
-		versionName "1.0"
+		minSdk ConfigData.minSdk
+		targetSdk ConfigData.targetSdk
+		versionCode ConfigData.versionCode
+		versionName ConfigData.versionName
     }
 
     buildTypes {
@@ -85,22 +85,6 @@ clean.dependsOn 'ndkClean'
 
 dependencies {
     implementation fileTree(dir: new File(buildDir, 'libs'), include: '*.jar')
-
-	implementation 'androidx.core:core-ktx:1.10.1'
-	implementation 'androidx.annotation:annotation:1.6.0'
-	implementation 'androidx.appcompat:appcompat:1.6.1'
-	implementation 'com.google.android.material:material:1.9.0'
-	implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-	testImplementation 'junit:junit:4.13.2'
-	androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-	androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-	implementation 'com.google.code.gson:gson:2.10.1'
-	implementation 'com.google.guava:guava:32.0.1-jre'
-	implementation "androidx.lifecycle:lifecycle-livedata:2.6.1"
-	implementation "androidx.lifecycle:lifecycle-viewmodel:2.6.1"
-	implementation "androidx.activity:activity-ktx:1.7.2"
-
-	implementation("com.serenegiant:common:4.1.1") {
-		exclude module: 'support-v4'
-	}
+	implementation ProjectDependencies.appCompat
+	implementation ProjectDependencies.serenegiantCommon
 }
