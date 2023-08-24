@@ -33,6 +33,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.core.view.forEach
+import com.bekhruzdev.drivesafe.R
 import com.bekhruzdev.drivesafe.base.BaseActivity
 import com.bekhruzdev.drivesafe.base.BaseComponent.handleSleeping
 import com.bekhruzdev.drivesafe.databinding.MainLayoutBinding
@@ -46,15 +47,15 @@ import com.bekhruzdev.drivesafe.service.DrowsinessDetectionService
 import com.bekhruzdev.drivesafe.ui.TestPreviewActivity
 import com.bekhruzdev.drivesafe.ui.usb_camera_live_preview.UsbCameraLivePreviewActivity
 import com.bekhruzdev.drivesafe.utils.view_utils.selected
+import com.bekhruzdev.drivesafe.utils.view_utils.showToast
 import com.bekhruzdev.drivesafe.utils.view_utils.showToastLongTime
 import com.google.android.gms.common.annotation.KeepName
-import com.google.mlkit.common.MlKitException
-import com.google.mlkit.vision.face.Face
-import dagger.hilt.android.AndroidEntryPoint
-import com.bekhruzdev.drivesafe.R
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
+import com.google.mlkit.common.MlKitException
+import com.google.mlkit.vision.face.Face
+import dagger.hilt.android.AndroidEntryPoint
 
 @ExperimentalGetImage
 /** Live preview demo app for ML Kit APIs using CameraX. */
@@ -78,6 +79,7 @@ class CameraXLivePreviewActivity :
     private var drowsinessDetectionService: Service? = null
     private var isPlaying = false
     private var currentSound = 0
+    private var isPressedBackOnce = true
 
     //connection with the Bound Service
     private val connection = @ExperimentalGetImage object : ServiceConnection {
@@ -100,8 +102,8 @@ class CameraXLivePreviewActivity :
         initFaceActions()
         handleBackPressed()
         cameraXViewModel.isServiceBound.observe(this) { bound ->
-            Firebase.analytics.logEvent ("detection"){
-                param("running", if(bound) "true" else "false")
+            Firebase.analytics.logEvent("detection") {
+                param("running", if (bound) "true" else "false")
             }
             if (bound) {
                 binding.lvPowerBtn.setAnimation(R.raw.lottie_power_on)
@@ -114,11 +116,8 @@ class CameraXLivePreviewActivity :
             }
             binding.lvPowerBtn.playAnimation()
             isBound = bound
-            Log.d("ISBOUND", "$isBound")
         }
     }
-
-    //TODO: ONLY PORTRAIT SCREEN SUPPORT
 
     override fun onInitUi() {
         super.onInitUi()
@@ -176,7 +175,7 @@ class CameraXLivePreviewActivity :
                 AppPreferences.useFlashlight = isChecked
             }
         }
-        when(AppPreferences.sleepTimeOut){
+        when (AppPreferences.sleepTimeOut) {
             500 -> binding.include.millis500.selected()
             1000 -> binding.include.millis1000.selected()
             1500 -> binding.include.millis1500.selected()
@@ -187,8 +186,6 @@ class CameraXLivePreviewActivity :
             }
             it.selected()
             AppPreferences.sleepTimeOut = 500
-
-            Log.d("LOL","SleepTime out ${AppPreferences.sleepTimeOut}")
         }
         binding.include.millis1000.setOnClickListener {
             binding.include.llSleepTimeOut.forEach { view ->
@@ -196,8 +193,6 @@ class CameraXLivePreviewActivity :
             }
             it.selected()
             AppPreferences.sleepTimeOut = 1000
-
-            Log.d("LOL","SleepTime out ${AppPreferences.sleepTimeOut}")
         }
         binding.include.millis1500.setOnClickListener {
             binding.include.llSleepTimeOut.forEach { view ->
@@ -205,12 +200,10 @@ class CameraXLivePreviewActivity :
             }
             it.selected()
             AppPreferences.sleepTimeOut = 1500
-
-            Log.d("LOL","SleepTime out ${AppPreferences.sleepTimeOut}")
         }
 
 
-        when(AppPreferences.sound){
+        when (AppPreferences.sound) {
             AppPreferences.SOUND_SIREN -> binding.include.btnAlarmSiren.selected()
             AppPreferences.SOUND_POLICE_SIREN -> binding.include.btnPoliceSiren.selected()
             AppPreferences.SOUND_TRUCK_HONK -> binding.include.btnTruckSiren.selected()
@@ -222,10 +215,10 @@ class CameraXLivePreviewActivity :
             it.selected()
             AppPreferences.sound = AppPreferences.SOUND_SIREN
 
-            if(isPlaying && currentSound == R.raw.sound_siren){
+            if (isPlaying && currentSound == R.raw.sound_siren) {
                 stopPlayer()
                 isPlaying = false
-            }else{
+            } else {
                 stopPlayer()
                 playSound(R.raw.sound_siren)
                 currentSound = R.raw.sound_siren
@@ -239,10 +232,10 @@ class CameraXLivePreviewActivity :
             }
             it.selected()
             AppPreferences.sound = AppPreferences.SOUND_POLICE_SIREN
-            if(isPlaying && currentSound == R.raw.sound_police_siren){
+            if (isPlaying && currentSound == R.raw.sound_police_siren) {
                 stopPlayer()
                 isPlaying = false
-            }else{
+            } else {
                 stopPlayer()
                 playSound(R.raw.sound_police_siren)
                 currentSound = R.raw.sound_police_siren
@@ -256,10 +249,10 @@ class CameraXLivePreviewActivity :
             }
             it.selected()
             AppPreferences.sound = AppPreferences.SOUND_TRUCK_HONK
-            if(isPlaying && currentSound == R.raw.sound_truck_horn){
+            if (isPlaying && currentSound == R.raw.sound_truck_horn) {
                 stopPlayer()
                 isPlaying = false
-            }else{
+            } else {
                 stopPlayer()
                 playSound(R.raw.sound_truck_horn)
                 currentSound = R.raw.sound_truck_horn
@@ -287,15 +280,6 @@ class CameraXLivePreviewActivity :
         }
     }
 
-
-    private fun initCameraProvider() {
-        cameraXViewModel.getProcessCameraProvider().observe(this) {
-            cameraProvider = it
-            bindAllCameraUseCases()
-        }
-        Log.d(TAG, "Initialized CameraProvider")
-    }
-
     public override fun onResume() {
         super.onResume()
         bindAllCameraUseCases()
@@ -309,7 +293,6 @@ class CameraXLivePreviewActivity :
     public override fun onDestroy() {
         super.onDestroy()
         imageProcessor?.run { this.stop() }
-      //  unbindService(connection)
         isBound = false
     }
 
@@ -416,7 +399,15 @@ class CameraXLivePreviewActivity :
     private fun handleBackPressed() {
         val callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                finish()
+                if (isPressedBackOnce) {
+                    isPressedBackOnce = false
+                    showToast("Press back button again to exit")
+                    queueEvent(2500) {
+                        isPressedBackOnce = true
+                    }
+                } else {
+                    finish()
+                }
             }
         }
         this.onBackPressedDispatcher.addCallback(this, callback)
