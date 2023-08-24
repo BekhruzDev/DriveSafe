@@ -5,7 +5,7 @@ object ConfigData{
     const val targetSdk = 34
     const val minSdk = 22
     const val versionCode = 1
-    const val versionName = "1.0.0"
+    const val versionName = "1.0.2"
     const val databaseVersion = 0
     const val databaseName = "cache_room_database"
 }
