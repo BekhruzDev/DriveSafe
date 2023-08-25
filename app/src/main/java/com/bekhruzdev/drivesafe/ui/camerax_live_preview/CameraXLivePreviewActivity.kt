@@ -159,6 +159,7 @@ class CameraXLivePreviewActivity :
             }
             val intent = Intent(this, UsbCameraLivePreviewActivity::class.java)
             startActivity(intent)
+            showToast("This feature is currently in test mode!")
         }
         binding.include.switchFlashlightBlink.apply {
             isChecked = AppPreferences.useFlashlight
