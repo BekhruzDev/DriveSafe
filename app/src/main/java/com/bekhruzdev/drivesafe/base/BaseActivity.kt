@@ -7,12 +7,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
 import kotlinx.coroutines.*
 
-open class BaseActivity<VB:ViewBinding>(val inflater:(LayoutInflater) -> VB) : AppCompatActivity() {
+open class BaseActivity<VB : ViewBinding>(val inflater: (LayoutInflater) -> VB) :
+    AppCompatActivity() {
 
     lateinit var binding: VB
     private val uiScope = CoroutineScope(Dispatchers.Main)
     private val workerScope = CoroutineScope(Dispatchers.Default)
-    private var mediaPlayer:MediaPlayer? = null
+    private var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,6 +26,7 @@ open class BaseActivity<VB:ViewBinding>(val inflater:(LayoutInflater) -> VB) : A
         super.onStart()
         onInitUi()
     }
+
     override fun onPause() {
         super.onPause()
         stopPlayer()
@@ -34,7 +36,8 @@ open class BaseActivity<VB:ViewBinding>(val inflater:(LayoutInflater) -> VB) : A
         super.onStop()
         stopPlayer()
     }
-    open fun onInitUi(){}
+
+    open fun onInitUi() {}
 
     override fun onDestroy() {
         // Cancel all coroutines
@@ -53,28 +56,33 @@ open class BaseActivity<VB:ViewBinding>(val inflater:(LayoutInflater) -> VB) : A
     }
 
 
-    fun queueEvent( delayMillis: Long = 0L, task: suspend () -> Unit,) {
+    fun queueEvent(delayMillis: Long = 0L, task: suspend () -> Unit) {
         workerScope.launch {
             delay(delayMillis)
             task()
         }
     }
 
-     fun playSound(soundRawRes:Int) {
-        if(mediaPlayer ==null){
+    fun playSound(soundRawRes: Int) {
+        if (mediaPlayer == null) {
             mediaPlayer = MediaPlayer.create(this, soundRawRes)
-            mediaPlayer!!.setOnCompletionListener { stopPlayer() }
+            mediaPlayer?.setOnCompletionListener { stopPlayer() }
         }
-        mediaPlayer!!.start()
+        if (mediaPlayer?.isPlaying == false) {
+            mediaPlayer?.start()
+        }
     }
 
-    fun stopPlayer() {
+    fun stopPlayer(doOnStop:() ->Unit = {}) {
         if (mediaPlayer != null) {
-            mediaPlayer!!.release()
+            mediaPlayer?.stop()
+            mediaPlayer?.release()
             mediaPlayer = null
         }
+        doOnStop.invoke()
     }
-    companion object{
+
+    companion object {
         const val TAG = "BaseActivity"
 
     }

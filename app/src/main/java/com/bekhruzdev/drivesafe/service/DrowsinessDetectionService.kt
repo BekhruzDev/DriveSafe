@@ -50,6 +50,7 @@ class DrowsinessDetectionService : LifecycleService() {
     private val workerScope = CoroutineScope(Dispatchers.Default)
     private var cameraManager: CameraManager? = null
     private var mediaPlayer: MediaPlayer? = null
+
     @RawRes
     private var currentSound: Int = 0
 
@@ -180,7 +181,6 @@ class DrowsinessDetectionService : LifecycleService() {
                     }
                 }
             }
-
         }
     }
 
@@ -224,6 +224,8 @@ class DrowsinessDetectionService : LifecycleService() {
     override fun onUnbind(intent: Intent?): Boolean {
         // Stop the service from being in the foreground
         stopForeground(true)
+        cameraProvider?.unbindAll()
+        stopPlayer()
         return super.onUnbind(intent)
     }
 
@@ -231,22 +233,21 @@ class DrowsinessDetectionService : LifecycleService() {
     override fun onDestroy() {
         super.onDestroy()
         cameraProvider?.unbindAll()
-        mediaPlayer?.release()
+        stopPlayer()
     }
 
     private fun playSound() {
-        if (mediaPlayer == null) {
+        if (mediaPlayer == null || mediaPlayer?.isPlaying == false) {
+            stopPlayer()
             mediaPlayer = MediaPlayer.create(this, currentSound)
             mediaPlayer?.setOnCompletionListener { stopPlayer() }
-        }else{
-            if (mediaPlayer?.isPlaying == false) {
-                mediaPlayer?.start()
-            }
+            mediaPlayer?.start()
         }
     }
 
     fun stopPlayer() {
         if (mediaPlayer != null) {
+            mediaPlayer?.stop()
             mediaPlayer?.release()
             mediaPlayer = null
         }

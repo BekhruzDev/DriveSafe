@@ -18,13 +18,10 @@ package com.bekhruzdev.drivesafe.ui.camerax_live_preview
 
 import android.app.Service
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
-import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.camera.core.ExperimentalGetImage
@@ -33,12 +30,10 @@ import androidx.lifecycle.lifecycleScope
 import com.bekhruzdev.drivesafe.R
 import com.bekhruzdev.drivesafe.base.BaseActivity
 import com.bekhruzdev.drivesafe.databinding.MainLayoutBinding
-import com.bekhruzdev.drivesafe.facedetector.OnSleepActions
 import com.bekhruzdev.drivesafe.preference.AppPreferences
 import com.bekhruzdev.drivesafe.service.DrowsinessDetectionService
 import com.bekhruzdev.drivesafe.ui.TestPreviewActivity
 import com.bekhruzdev.drivesafe.ui.usb_camera_live_preview.UsbCameraLivePreviewActivity
-import com.bekhruzdev.drivesafe.utils.view_utils.manageVisibility
 import com.bekhruzdev.drivesafe.utils.view_utils.selected
 import com.bekhruzdev.drivesafe.utils.view_utils.showSnackBar
 import com.bekhruzdev.drivesafe.utils.view_utils.showToast
@@ -47,6 +42,8 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @ExperimentalGetImage
@@ -101,10 +98,8 @@ class CameraXLivePreviewActivity :
     override fun onInitUi() {
         super.onInitUi()
         binding.llPreview.setOnClickListener {
-            if (isBound) {
-                stopDetectionService()
-            }
-            val intent = Intent(this, TestPreviewActivity::class.java)
+            stopPlayerAndDetection()
+            val intent = Intent(this@CameraXLivePreviewActivity, TestPreviewActivity::class.java)
             startActivity(intent)
         }
         binding.lvPowerBtn.apply {
@@ -115,8 +110,8 @@ class CameraXLivePreviewActivity :
                 binding.lvPowerBtn.setAnimation(R.raw.lottie_power_off_v3)
             }
             setOnClickListener {
+                stopPlayerAndDetection()
                 if (isBound) {
-                    stopDetectionService()
                     this.setAnimation(R.raw.lottie_power_off_v3)
                 } else {
                     startDetectionService()
@@ -126,22 +121,22 @@ class CameraXLivePreviewActivity :
             }
         }
         binding.llEcoMode.setOnClickListener {
-            if(isBound){
+            if (isBound) {
                 moveTaskToBack(true)
-            }else{
+            } else {
                 showSnackBar(
                     view = binding.root,
                     message = "You haven't started Anti-Sleep detection!",
                     buttonText = "Start",
                     buttonTextColor = resources.getColor(R.color.green_600)
-                ){
+                ) {
                     startDetectionService()
                 }
             }
         }
         binding.llUsbCam.setOnClickListener {
             if (isBound) {
-                stopDetectionService()
+                stopPlayerAndDetection()
             }
             val intent = Intent(this, UsbCameraLivePreviewActivity::class.java)
             startActivity(intent)
@@ -194,10 +189,10 @@ class CameraXLivePreviewActivity :
             AppPreferences.sound = AppPreferences.SOUND_SIREN
 
             if (isPlaying && currentSound == R.raw.sound_siren) {
-                stopPlayer()
+                stopPlayerAndDetection()
                 isPlaying = false
             } else {
-                stopPlayer()
+                stopPlayerAndDetection()
                 playSound(R.raw.sound_siren)
                 currentSound = R.raw.sound_siren
                 isPlaying = true
@@ -211,10 +206,10 @@ class CameraXLivePreviewActivity :
             it.selected()
             AppPreferences.sound = AppPreferences.SOUND_POLICE_SIREN
             if (isPlaying && currentSound == R.raw.sound_police_siren) {
-                stopPlayer()
+                stopPlayerAndDetection()
                 isPlaying = false
             } else {
-                stopPlayer()
+                stopPlayerAndDetection()
                 playSound(R.raw.sound_police_siren)
                 currentSound = R.raw.sound_police_siren
                 isPlaying = true
@@ -228,10 +223,10 @@ class CameraXLivePreviewActivity :
             it.selected()
             AppPreferences.sound = AppPreferences.SOUND_TRUCK_HONK
             if (isPlaying && currentSound == R.raw.sound_truck_horn) {
-                stopPlayer()
+                stopPlayerAndDetection()
                 isPlaying = false
             } else {
-                stopPlayer()
+                stopPlayerAndDetection()
                 playSound(R.raw.sound_truck_horn)
                 currentSound = R.raw.sound_truck_horn
                 isPlaying = true
@@ -240,8 +235,10 @@ class CameraXLivePreviewActivity :
     }
 
     private fun stopDetectionService() {
-        unbindService(connection)
-        cameraXViewModel.setServiceBound(false)
+        if (isBound) {
+            unbindService(connection)
+            cameraXViewModel.setServiceBound(false)
+        }
     }
 
     private fun startDetectionService() {
@@ -276,6 +273,11 @@ class CameraXLivePreviewActivity :
         this.onBackPressedDispatcher.addCallback(this, callback)
     }
 
+    private fun stopPlayerAndDetection() {
+        stopPlayer {
+            stopDetectionService()
+        }
+    }
 
     companion object {
         private const val TAG = "CameraXLivePreview"
