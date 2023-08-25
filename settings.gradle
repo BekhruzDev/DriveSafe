@@ -14,6 +14,6 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "DriveSafe"
-include ':app'/*
+include ':app'
 include ':libuvccamera'
-include ':usbCameraCommon'*/
+include ':usbCameraCommon'
