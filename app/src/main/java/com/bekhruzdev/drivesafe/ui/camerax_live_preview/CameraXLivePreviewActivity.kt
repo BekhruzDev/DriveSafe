@@ -18,10 +18,13 @@ package com.bekhruzdev.drivesafe.ui.camerax_live_preview
 
 import android.app.Service
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.media.AudioManager
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.camera.core.ExperimentalGetImage
@@ -35,6 +38,7 @@ import com.bekhruzdev.drivesafe.service.DrowsinessDetectionService
 import com.bekhruzdev.drivesafe.ui.TestPreviewActivity
 import com.bekhruzdev.drivesafe.ui.usb_camera_live_preview.UsbCameraLivePreviewActivity
 import com.bekhruzdev.drivesafe.utils.view_utils.selected
+import com.bekhruzdev.drivesafe.utils.view_utils.showAlertDialog
 import com.bekhruzdev.drivesafe.utils.view_utils.showSnackBar
 import com.bekhruzdev.drivesafe.utils.view_utils.showToast
 import com.google.android.gms.common.annotation.KeepName
@@ -43,7 +47,6 @@ import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.ktx.Firebase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @ExperimentalGetImage
@@ -97,6 +100,22 @@ class CameraXLivePreviewActivity :
 
     override fun onInitUi() {
         super.onInitUi()
+        lifecycleScope.launch(Dispatchers.Main) {
+            Log.d(TAG, "audioVolume: ${getMediaVolume()}")
+            Log.d(TAG, "max audioVolume: ${getMaxMediaVolume()}")
+            val currentMediaVolume = getMediaVolume()
+            val maxMediaVolume = getMaxMediaVolume()
+            if(currentMediaVolume <= maxMediaVolume * (0.4f)){
+                showAlertDialog(
+                    this@CameraXLivePreviewActivity,
+                    title = "Attention!",
+                    message = "Please, turn up the media volume as much as possible to have a louder alert signal when drowsiness detected ",
+                    yesText = "Ok",
+                    noText = "",
+                    yesClicked = {}
+                )
+            }
+        }
         binding.llPreview.setOnClickListener {
             stopPlayerAndDetection()
             val intent = Intent(this@CameraXLivePreviewActivity, TestPreviewActivity::class.java)
@@ -279,112 +298,15 @@ class CameraXLivePreviewActivity :
         }
     }
 
+    fun getMediaVolume(): Int {
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        return audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+    }
+    fun getMaxMediaVolume():Int {
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        return audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+    }
     companion object {
         private const val TAG = "CameraXLivePreview"
     }
-
-    /*
-    private fun bindAllCameraUseCases() {
-        if (cameraProvider != null) {
-            // As required by CameraX API, unbinds all use cases before trying to re-bind any of them.
-            cameraProvider!!.unbindAll()
-            //bindPreviewUseCase()
-            bindAnalysisUseCase()
-        }
-    }
-
-    private fun bindPreviewUseCase() {
-        if (!PreferenceUtils.isCameraLiveViewportEnabled(this)) {
-            return
-        }
-        if (cameraProvider == null) {
-            return
-        }
-        if (previewUseCase != null) {
-            cameraProvider!!.unbind(previewUseCase)
-        }
-
-        val builder = Preview.Builder()
-        builder.setTargetResolution(Size(640, 480))
-        previewUseCase = builder.build()
-        previewUseCase!!.setSurfaceProvider(previewView!!.surfaceProvider)
-        cameraProvider!!.bindToLifecycle(
-            this,
-            cameraSelector!!,
-            previewUseCase
-        )
-    }
-
-    private fun bindAnalysisUseCase() {
-        if (cameraProvider == null) {
-            return
-        }
-        if (analysisUseCase != null) {
-            cameraProvider!!.unbind(analysisUseCase)
-        }
-        if (imageProcessor != null) {
-            imageProcessor!!.stop()
-        }
-        imageProcessor =
-            try {
-                Log.i(TAG, "Using Face Detector Processor")
-                val faceDetectorOptions = PreferenceUtils.getFaceDetectorOptions(this)
-                FaceDetectorProcessor(this, faceDetectorOptions, onFaceActions)
-            } catch (e: Exception) {
-                Log.e(TAG, "Can not create image processor: $selectedModel", e)
-                showToastLongTime("Can not create image processor: ")
-                return
-            }
-
-        val builder = ImageAnalysis.Builder()
-        val targetResolution = PreferenceUtils.getCameraXTargetResolution(this, lensFacing)
-        if (targetResolution != null) {
-            builder.setTargetResolution(targetResolution)
-        }
-        analysisUseCase = builder.build()
-
-        needUpdateGraphicOverlayImageSourceInfo = true
-
-        analysisUseCase?.setAnalyzer(
-            // imageProcessor.processImageProxy will use another thread to run the detection underneath,
-            // thus we can just run the analyzer itself on main thread.
-            ContextCompat.getMainExecutor(this),
-            ImageAnalysis.Analyzer { imageProxy: ImageProxy ->
-                if (needUpdateGraphicOverlayImageSourceInfo) {
-                    val isImageFlipped = lensFacing == CameraSelector.LENS_FACING_FRONT
-                    val rotationDegrees = imageProxy.imageInfo.rotationDegrees
-                    if (rotationDegrees == 0 || rotationDegrees == 180) {
-                        graphicOverlay!!.setImageSourceInfo(
-                            imageProxy.width,
-                            imageProxy.height,
-                            isImageFlipped
-                        )
-                    } else {
-                        graphicOverlay!!.setImageSourceInfo(
-                            imageProxy.height,
-                            imageProxy.width,
-                            isImageFlipped
-                        )
-                    }
-                    needUpdateGraphicOverlayImageSourceInfo = false
-                }
-                try {
-                    imageProcessor!!.processImageProxy(imageProxy, graphicOverlay)
-                } catch (e: MlKitException) {
-                    Log.e(TAG, "Failed to process image. Error: " + e.localizedMessage)
-                    Toast.makeText(applicationContext, e.localizedMessage, Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-        )
-        cameraProvider!!.bindToLifecycle(*/
-/* lifecycleOwner = *//*
- this,
-            cameraSelector!!,
-            analysisUseCase
-        )
-    }
-
-*/
-
 }
