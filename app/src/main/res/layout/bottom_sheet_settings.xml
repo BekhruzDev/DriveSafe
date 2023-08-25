@@ -8,11 +8,21 @@
     android:background="@drawable/bg_bottom_sheet"
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
-    android:paddingVertical="24dp">
+    android:paddingTop="8dp"
+    android:paddingBottom="24dp">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:layout_width="60dp"
+        android:layout_height="8dp"
+        app:srcCompat="@drawable/ic_bottomsheet_tab"
+        app:tint="@color/white"
+        android:layout_gravity="center"/>
+
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tvSettings"
         android:layout_width="match_parent"
+        android:layout_marginTop="8dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/changa_semi_bold"
         android:gravity="center_horizontal"
