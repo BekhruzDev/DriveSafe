@@ -239,7 +239,9 @@ class DrowsinessDetectionService : LifecycleService() {
             mediaPlayer = MediaPlayer.create(this, currentSound)
             mediaPlayer?.setOnCompletionListener { stopPlayer() }
         }else{
-            mediaPlayer?.start()
+            if (mediaPlayer?.isPlaying == false) {
+                mediaPlayer?.start()
+            }
         }
     }
 
