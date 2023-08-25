@@ -157,8 +157,8 @@ class CameraXLivePreviewActivity :
             if (isBound) {
                 stopPlayerAndDetection()
             }
-            val intent = Intent(this, UsbCameraLivePreviewActivity::class.java)
-            startActivity(intent)
+          /*  val intent = Intent(this, UsbCameraLivePreviewActivity::class.java)
+            startActivity(intent)*/
             showToast("This feature is currently in test mode!")
         }
         binding.include.switchFlashlightBlink.apply {
