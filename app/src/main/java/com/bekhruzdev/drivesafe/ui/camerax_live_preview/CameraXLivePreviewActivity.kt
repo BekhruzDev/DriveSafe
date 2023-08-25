@@ -36,7 +36,6 @@ import com.bekhruzdev.drivesafe.databinding.MainLayoutBinding
 import com.bekhruzdev.drivesafe.preference.AppPreferences
 import com.bekhruzdev.drivesafe.service.DrowsinessDetectionService
 import com.bekhruzdev.drivesafe.ui.TestPreviewActivity
-import com.bekhruzdev.drivesafe.ui.usb_camera_live_preview.UsbCameraLivePreviewActivity
 import com.bekhruzdev.drivesafe.utils.view_utils.selected
 import com.bekhruzdev.drivesafe.utils.view_utils.showAlertDialog
 import com.bekhruzdev.drivesafe.utils.view_utils.showSnackBar
@@ -155,8 +154,9 @@ class CameraXLivePreviewActivity :
             if (isBound) {
                 stopPlayerAndDetection()
             }
-            val intent = Intent(this, UsbCameraLivePreviewActivity::class.java)
-            startActivity(intent)
+          /*  val intent = Intent(this, UsbCameraLivePreviewActivity::class.java)
+            startActivity(intent)*/
+            showToast("This feature is currently in test mode!")
         }
         binding.include.switchFlashlightBlink.apply {
             isChecked = AppPreferences.useFlashlight
