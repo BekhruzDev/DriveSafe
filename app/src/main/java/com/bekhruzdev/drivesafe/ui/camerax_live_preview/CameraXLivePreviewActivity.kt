@@ -101,8 +101,6 @@ class CameraXLivePreviewActivity :
     override fun onInitUi() {
         super.onInitUi()
         lifecycleScope.launch(Dispatchers.Main) {
-            Log.d(TAG, "audioVolume: ${getMediaVolume()}")
-            Log.d(TAG, "max audioVolume: ${getMaxMediaVolume()}")
             val currentMediaVolume = getMediaVolume()
             val maxMediaVolume = getMaxMediaVolume()
             if(currentMediaVolume <= maxMediaVolume * (0.4f)){
@@ -298,11 +296,11 @@ class CameraXLivePreviewActivity :
         }
     }
 
-    fun getMediaVolume(): Int {
+    private fun getMediaVolume(): Int {
         val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         return audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
     }
-    fun getMaxMediaVolume():Int {
+    private fun getMaxMediaVolume():Int {
         val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         return audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
     }
