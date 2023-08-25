@@ -13,9 +13,6 @@
     <uses-feature android:name="android.hardware.camera.flash" />
 
 
-    <uses-feature
-        android:name="android.hardware.camera.external"
-        android:required="true" />
     <application
         android:name=".application.DriveSafeApplication"
         android:allowBackup="true"
@@ -25,7 +22,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.DriveSafe"
-        tools:targetApi="33">
+        tools:targetApi="34">
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -72,7 +69,7 @@
         </activity>
 
 
-        <activity
+    <!--    <activity
             android:name=".ui.usb_camera_live_preview.UsbCameraLivePreviewActivity"
             android:exported="true"
             android:launchMode="singleTask"
@@ -84,11 +81,11 @@
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" />
             </intent-filter>
-          <!--  <meta-data
+          &lt;!&ndash;  <meta-data
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
-                android:resource="@xml/device_filter" />-->
+                android:resource="@xml/device_filter" />&ndash;&gt;
         </activity>
-
+-->
 
         <activity
             android:name=".ui.SettingsActivity"

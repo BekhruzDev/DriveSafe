@@ -1,4 +1,5 @@
 package com.bekhruzdev.drivesafe.ui.usb_camera_live_preview
+/*
 
 import android.graphics.SurfaceTexture
 import android.hardware.usb.UsbDevice
@@ -112,4 +113,4 @@ class UsbCameraLivePreviewActivity :
         }
 
 
-}
+}*/
