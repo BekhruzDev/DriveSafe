@@ -37,7 +37,7 @@ Turning on the "Use flashlight" option, enables the app to blink on and off the 
 
 
 # Contact developer
-bekhruzabdullakhujaevpro@gmail.com
+mrabdullakhujayev@gmail.com
 
 # DriveSafe and Stay safe
 
