@@ -17,7 +17,6 @@ open class BaseActivity<VB : ViewBinding>(val inflater: (LayoutInflater) -> VB) 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = inflater(layoutInflater)
         setContentView(binding.root)
     }

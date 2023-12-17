@@ -35,7 +35,7 @@
 
 
            <activity
-               android:name=".mlkit_utils.MainActivity"
+               android:name=".ui.MainActivity"
                android:exported="true"
                android:theme="@style/AppTheme"
                android:configChanges="orientation"

@@ -19,7 +19,7 @@ object AppPreferences {
 
     var sleepTimeOut: Int
         set(value) = devicePreferences.edit().putInt(::sleepTimeOut.name, value).apply()
-    get() = devicePreferences.getInt(::sleepTimeOut.name, 500)
+        get() = devicePreferences.getInt(::sleepTimeOut.name, 500)
 
     var sound:String?
         set(value) = devicePreferences.edit().putString(::sound.name, value).apply()

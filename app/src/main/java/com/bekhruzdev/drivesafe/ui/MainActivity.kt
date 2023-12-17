@@ -1,20 +1,17 @@
-package com.bekhruzdev.drivesafe.mlkit_utils
+package com.bekhruzdev.drivesafe.ui
 
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.widget.ProgressBar
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.ExperimentalGetImage
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import com.bekhruzdev.drivesafe.R
 import com.bekhruzdev.drivesafe.databinding.ActivityMainBinding
-import com.bekhruzdev.drivesafe.ui.TestPreviewActivity
 import com.bekhruzdev.drivesafe.ui.camerax_live_preview.CameraXLivePreviewActivity
 import com.bekhruzdev.drivesafe.ui.live_preview.LivePreviewActivity
 import com.bekhruzdev.drivesafe.utils.view_utils.manageVisibility
@@ -41,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                 initCameraXActivity()
             }
             false -> {
-                if (shouldShowRequestPermissionRationale(Manifest.permission.CALL_PHONE)) {
+                if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
                     //when denied for one time
                     showAlertDialog(
                         this,
