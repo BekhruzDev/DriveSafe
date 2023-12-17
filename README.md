@@ -1,5 +1,5 @@
 # DriveSafe
-An app that prevent drivers from falling asleep while driving. 
+An app that prevent drivers from falling asleep while driving. Link to the GOOGLE PLAY MARKET: https://play.google.com/store/apps/details?id=com.bekhruzdev.drivesafe
 
 # Technologies used
 Android, Kotlin, Java, C, C++, Google ML (Machine Learning) kit, Face detection, CameraX, Camera1, USB and UVC Camera
@@ -37,7 +37,7 @@ Turning on the "Use flashlight" option, enables the app to blink on and off the 
 
 
 # Contact developer
-bekhruzabdullakhujaevpro@gmail.com
+mrabdullakhujayev@gmail.com
 
 # DriveSafe and Stay safe
 

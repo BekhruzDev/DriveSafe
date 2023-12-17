@@ -4,8 +4,8 @@ object ConfigData{
     const val buildToolsVersion = "32.0.0"
     const val targetSdk = 34
     const val minSdk = 22
-    const val versionCode = 10
-    const val versionName = "1.0.11"
+    const val versionCode = 14
+    const val versionName = "1.0.15"
     const val databaseVersion = 0
     const val databaseName = "cache_room_database"
 }
