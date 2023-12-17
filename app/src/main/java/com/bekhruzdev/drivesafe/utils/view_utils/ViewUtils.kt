@@ -21,6 +21,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.annotation.*
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -787,8 +788,8 @@ fun showAlertDialog(
     yesText:String = "Yes",
     noText:String = "No",
     yesClicked: (() -> Unit)? = null,
-    noClicked: (() -> Unit)? = null
-
+    noClicked: (() -> Unit)? = null,
+    cancellable: Boolean = true
 ) {
     val builder = AlertDialog.Builder(context)
     builder
@@ -803,5 +804,6 @@ fun showAlertDialog(
             dialog.dismiss()
         }
     val alert = builder.create()
+    alert.setCancelable(cancellable)
     alert.show()
 }

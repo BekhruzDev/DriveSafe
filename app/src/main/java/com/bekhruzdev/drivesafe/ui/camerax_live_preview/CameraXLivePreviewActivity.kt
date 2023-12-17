@@ -21,7 +21,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.content.SharedPreferences
 import android.media.AudioManager
+import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -61,6 +63,29 @@ class CameraXLivePreviewActivity :
     private var currentSound = 0
     private var isPressedBackOnce = true
     private var isBound = false
+    private lateinit var sharedPref: SharedPreferences
+    private lateinit var listener:SharedPreferences.OnSharedPreferenceChangeListener
+    private var dialogOpen = false
+
+
+
+    private fun openMaps() {
+        Log.d(TAG, "openMaps: ")
+        val query = "coffee shops"
+
+        // Create an Intent with the action and data for Google Maps
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$query"))
+
+        // Check if the user has the Google Maps app installed
+        if (intent.resolveActivity(packageManager) != null) {
+            // Start the activity if Google Maps is installed
+            startActivity(intent)
+        } else {
+            // If Google Maps is not installed, you can open the web version
+            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=$query"))
+            startActivity(webIntent)
+        }
+    }
 
     //connection with the Bound Service
     private val connection = @ExperimentalGetImage object : ServiceConnection {
@@ -79,6 +104,34 @@ class CameraXLivePreviewActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handleBackPressed()
+        sharedPref = getSharedPreferences("device_preferences", Context.MODE_PRIVATE)
+        listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
+            if (key == "timesSleepDetected") {
+                val timesSleepDetected = sharedPreferences.getInt(key, 0)
+                if(timesSleepDetected % 2 == 0){
+                    Log.d(TAG, "onCreate: Open Maps openMaps timesdetected: $timesSleepDetected")
+                    if (!dialogOpen){
+                        dialogOpen = true
+                        showAlertDialog(
+                            this@CameraXLivePreviewActivity,
+                            title = "Attention!",
+                            message = "You look so tired! Maybe, you should have some coffee and rest?",
+                            yesText = "Yes",
+                            noText = "No",
+                            yesClicked = {
+                                stopPlayerAndDetection()
+                                openMaps()
+                            },
+                            noClicked = {
+                                dialogOpen = false
+                            },
+                            cancellable = false
+                        )
+                    }
+                }
+            }
+        }
+        sharedPref.registerOnSharedPreferenceChangeListener(listener)
         cameraXViewModel.isServiceBound.observe(this) { bound ->
             Firebase.analytics.logEvent("detection") {
                 param("running", if (bound) "true" else "false")
@@ -99,6 +152,7 @@ class CameraXLivePreviewActivity :
 
     override fun onInitUi() {
         super.onInitUi()
+
         lifecycleScope.launch(Dispatchers.Main) {
             val currentMediaVolume = getMediaVolume()
             val maxMediaVolume = getMaxMediaVolume()
@@ -270,6 +324,7 @@ class CameraXLivePreviewActivity :
     public override fun onDestroy() {
         super.onDestroy()
         isBound = false
+        sharedPref.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
 

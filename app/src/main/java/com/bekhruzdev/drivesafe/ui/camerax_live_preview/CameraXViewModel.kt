@@ -47,6 +47,9 @@ class CameraXViewModel
     private val _isServiceBound = MutableLiveData<Boolean>()
     val isServiceBound :LiveData<Boolean> get() = _isServiceBound
 
+    private val _haveRest = MutableLiveData<Boolean>()
+    val haveRest:LiveData<Boolean> get() = _haveRest
+
     fun setServiceBound(bound: Boolean){
         _isServiceBound.postValue(bound)
     }

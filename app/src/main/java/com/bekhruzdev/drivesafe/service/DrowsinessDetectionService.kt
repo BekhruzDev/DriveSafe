@@ -50,6 +50,7 @@ class DrowsinessDetectionService : LifecycleService() {
     private val workerScope = CoroutineScope(Dispatchers.Default)
     private var cameraManager: CameraManager? = null
     private var mediaPlayer: MediaPlayer? = null
+    private var sleepCounter: Int = 0
 
     @RawRes
     private var currentSound: Int = 0
@@ -164,6 +165,7 @@ class DrowsinessDetectionService : LifecycleService() {
                     face.handleSleeping { isSleeping ->
                         if (isSleeping) {
                             Log.d(TAG, "SLEEPING!!!!!")
+                            countSleepCases(true)
                             playSound()
                             launch {
                                 if (AppPreferences.useFlashlight) {
@@ -172,6 +174,7 @@ class DrowsinessDetectionService : LifecycleService() {
                             }
                         } else {
                             Log.d(TAG, "NOT SLEEPING!!!!!")
+                            countSleepCases(false)
                             launch {
                                 if (AppPreferences.useFlashlight) {
                                     cameraManager?.let { stopFlashlight(it) }
@@ -184,6 +187,17 @@ class DrowsinessDetectionService : LifecycleService() {
         }
     }
 
+    private fun countSleepCases(sleeping:Boolean){
+        if(sleeping){
+            sleepCounter += 1
+            if(sleepCounter > 20){
+                sleepCounter = 0
+                AppPreferences.timesSleepDetected += 1
+            }
+        }
+        Log.d(TAG, "countSleepCases: $sleepCounter")
+        Log.d(TAG, "countSleepCasesPref: ${AppPreferences.timesSleepDetected}")
+    }
     private fun initFaceDetector() {
         val options = FaceDetectorOptions.Builder()
             .setClassificationMode(FaceDetectorOptions.CLASSIFICATION_MODE_ALL)

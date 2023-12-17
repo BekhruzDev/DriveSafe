@@ -25,6 +25,9 @@ object AppPreferences {
         set(value) = devicePreferences.edit().putString(::sound.name, value).apply()
         get() = devicePreferences.getString(::sound.name, SOUND_SIREN)
 
+    var timesSleepDetected: Int
+        set(value) = devicePreferences.edit().putInt(::timesSleepDetected.name, value).apply()
+        get() = devicePreferences.getInt(::timesSleepDetected.name, 0)
 
 
 
