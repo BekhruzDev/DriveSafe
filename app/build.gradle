@@ -82,6 +82,11 @@ dependencies {
     implementation ProjectDependencies.firebaseAnalyticsNoVersion
     implementation ProjectDependencies.firebaseCrashlyticsNoVersion
     implementation ProjectDependencies.hilt
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.5.3'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.5.3'
     kapt ProjectDependencies.hiltKapt
 
     //Face detection
@@ -91,6 +96,7 @@ dependencies {
     implementation ProjectDependencies.camera2
     implementation ProjectDependencies.cameraLifecycle
     implementation ProjectDependencies.cameraView
+    implementation ProjectDependencies.cameraCore
     implementation ProjectDependencies.serenegiantCommon
 
     testImplementation TestDependencies.jUnit

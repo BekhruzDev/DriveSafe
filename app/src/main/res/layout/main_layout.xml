@@ -36,125 +36,105 @@
             android:textSize="20sp" />
     </FrameLayout>
 
-
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/llMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:padding="16dp"
-        app:cardBackgroundColor="@color/main_background_secondary"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.LinearLayoutCompat
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <FrameLayout
-                android:id="@+id/flPowerBtn"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/lvPowerBtn"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:layout_gravity="center_horizontal"
-                    app:lottie_autoPlay="true"
-                    app:lottie_loop="true"
-                    app:lottie_rawRes="@raw/lottie_power_off_v3" />
-
-            </FrameLayout>
-
+            android:layout_marginHorizontal="16dp"
+            android:padding="16dp"
+            app:cardBackgroundColor="@color/main_background_secondary"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tvAntiSleep"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/changa_semi_bold"
-                    android:text="Anti-Sleep is "
-                    android:textColor="@color/charcoal"
-                    android:textSize="24sp" />
+                <FrameLayout
+                    android:id="@+id/flPowerBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/tvAntiSleepStatus"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/changa_semi_bold"
-                    android:text="not active"
-                    android:textColor="@color/orange_red_500"
-                    android:textSize="24sp" />
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lvPowerBtn"
+                        android:layout_width="200dp"
+                        android:layout_height="200dp"
+                        android:layout_gravity="center_horizontal"
+                        app:lottie_autoPlay="true"
+                        app:lottie_loop="true"
+                        app:lottie_rawRes="@raw/lottie_power_off_v3" />
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
-
-            <androidx.appcompat.widget.LinearLayoutCompat
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="25dp"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal">
+                </FrameLayout>
 
 
                 <androidx.appcompat.widget.LinearLayoutCompat
-                    android:id="@+id/llEcoMode"
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:clickable="true"
-                    android:paddingHorizontal="8dp"
-                    android:focusable="true"
-                    android:foreground="?selectableItemBackground"
-                    android:background="@drawable/bg_green_8dp_selector"
-                    android:gravity="center"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_horizontal"
                     android:orientation="horizontal">
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        app:tint="@color/white"
-                        app:srcCompat="@drawable/ic_energy_saving"/>
+
                     <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvAntiSleep"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/changa_medium"
-                        android:layout_marginStart="6dp"
-                        android:textColor="@color/white"
-                        android:textSize="14sp"
-                        android:text="Eco mode"/>
+                        android:fontFamily="@font/changa_semi_bold"
+                        android:text="Anti-Sleep is "
+                        android:textColor="@color/charcoal"
+                        android:textSize="24sp" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tvAntiSleepStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/changa_semi_bold"
+                        android:text="not active"
+                        android:textColor="@color/orange_red_500"
+                        android:textSize="24sp" />
+
                 </androidx.appcompat.widget.LinearLayoutCompat>
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="40dp"
-                    android:layout_marginStart="30dp"
-                    android:clickable="true"
-                    android:background="?selectableItemBackground"
-                    android:focusable="true">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="25dp"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+
                     <androidx.appcompat.widget.LinearLayoutCompat
-                        android:id="@+id/llUsbCam"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:id="@+id/llEcoMode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:clickable="true"
                         android:paddingHorizontal="8dp"
-                        android:background="@drawable/bg_blue_8dp"
+                        android:focusable="true"
+                        android:foreground="?selectableItemBackground"
+                        android:background="@drawable/bg_green_8dp_selector"
                         android:gravity="center"
                         android:orientation="horizontal">
                         <androidx.appcompat.widget.AppCompatImageView
                             android:layout_width="24dp"
                             android:layout_height="24dp"
                             app:tint="@color/white"
-                            app:srcCompat="@drawable/ic_usb_camera_48px"/>
+                            app:srcCompat="@drawable/ic_energy_saving"/>
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -162,8 +142,37 @@
                             android:layout_marginStart="6dp"
                             android:textColor="@color/white"
                             android:textSize="14sp"
-                            android:text="Usb camera"/>
+                            android:text="Eco mode"/>
                     </androidx.appcompat.widget.LinearLayoutCompat>
+                    <FrameLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="40dp"
+                        android:layout_marginStart="30dp"
+                        android:clickable="true"
+                        android:background="?selectableItemBackground"
+                        android:focusable="true">
+                        <androidx.appcompat.widget.LinearLayoutCompat
+                            android:id="@+id/llUsbCam"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:paddingHorizontal="8dp"
+                            android:background="@drawable/bg_blue_8dp"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+                            <androidx.appcompat.widget.AppCompatImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                app:tint="@color/white"
+                                app:srcCompat="@drawable/ic_usb_camera_48px"/>
+                            <androidx.appcompat.widget.AppCompatTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/changa_medium"
+                                android:layout_marginStart="6dp"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                android:text="Usb camera"/>
+                        </androidx.appcompat.widget.LinearLayoutCompat>
 
                         <androidx.appcompat.widget.AppCompatTextView
                             android:layout_width="wrap_content"
@@ -174,41 +183,73 @@
                             android:layout_gravity="top|end"
                             android:fontFamily="@font/changa_regular"
                             android:textSize="10sp"/>
-                </FrameLayout>
+                    </FrameLayout>
 
 
+                </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.cardview.widget.CardView>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/llPreview"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?selectableItemBackground"
+            android:background="@drawable/bg_green_8dp_selector"
+            android:layout_marginHorizontal="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardView"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:tint="@color/white"
+                app:srcCompat="@drawable/ic_adjust_camera_48px"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/changa_medium"
+                android:layout_marginStart="12dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:text="Preview"/>
         </androidx.appcompat.widget.LinearLayoutCompat>
-    </androidx.cardview.widget.CardView>
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/llPreview"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:clickable="true"
-        android:focusable="true"
-        android:foreground="?selectableItemBackground"
-        android:background="@drawable/bg_green_8dp_selector"
-        android:layout_marginHorizontal="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cardView"
-        android:layout_marginTop="16dp"
-        android:gravity="center"
-        android:orientation="horizontal">
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            app:tint="@color/white"
-            app:srcCompat="@drawable/ic_adjust_camera_48px"/>
-        <androidx.appcompat.widget.AppCompatTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/changa_medium"
-            android:layout_marginStart="12dp"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            android:text="Preview"/>
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/llVideoReg"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?selectableItemBackground"
+            android:background="@drawable/bg_green_8dp_selector"
+            android:layout_marginHorizontal="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/llPreview"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="32dp"
+                android:layout_height="28dp"
+                app:tint="@color/white"
+                app:srcCompat="@drawable/ic_videocam"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/changa_medium"
+                android:layout_marginStart="12dp"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:text="Video Recorder"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+
     </androidx.appcompat.widget.LinearLayoutCompat>
+
 
 
     <include

@@ -3,16 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.bekhruzdev.drivesafe">
 
-
     <uses-feature android:name="android.hardware.camera" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
+
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <uses-feature android:name="android.hardware.camera.flash" />
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"/>
 
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+    <uses-permission
+        android:name="com.google.android.gms.permission.AD_ID"
+        tools:node="remove" />
 
     <application
         android:name=".application.DriveSafeApplication"
@@ -24,53 +30,53 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.DriveSafe"
         tools:targetApi="34">
+        <activity
+            android:name=".ui.video_registeration.VideoRegisterActivity"
+            android:exported="true"
+            android:label="@string/title_activity_video_register"
+            android:theme="@style/Theme.DriveSafe">
+        </activity>
+
 
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
-
         <meta-data
             android:name="com.google.mlkit.vision.DEPENDENCIES"
             android:value="face" />
 
+        <activity
+            android:name=".ui.MainActivity"
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-           <activity
-               android:name=".ui.MainActivity"
-               android:exported="true"
-               android:theme="@style/AppTheme"
-               android:configChanges="orientation"
-               android:screenOrientation="portrait">
-               <intent-filter>
-                   <action android:name="android.intent.action.MAIN" />
-
-                   <category android:name="android.intent.category.LAUNCHER" />
-               </intent-filter>
-           </activity>
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.camerax_live_preview.CameraXLivePreviewActivity"
-            android:exported="true"
-            android:theme="@style/AppTheme"
             android:configChanges="orientation"
-            android:screenOrientation="portrait">
-        </activity>
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".ui.live_preview.LivePreviewActivity"
-            android:exported="true"
-            android:theme="@style/AppTheme"
             android:configChanges="orientation"
-            android:screenOrientation="portrait">
-        </activity>
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
         <activity
             android:name=".ui.TestPreviewActivity"
-            android:exported="true"
-            android:theme="@style/AppTheme"
             android:configChanges="orientation"
-            android:screenOrientation="portrait">
-        </activity>
-
-
-    <!--    <activity
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
+        <!--
+    <activity
             android:name=".ui.usb_camera_live_preview.UsbCameraLivePreviewActivity"
             android:exported="true"
             android:launchMode="singleTask"
@@ -86,19 +92,17 @@
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/device_filter" />&ndash;&gt;
         </activity>
--->
-
+        -->
         <activity
             android:name=".ui.SettingsActivity"
+            android:configChanges="orientation"
             android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SampleActivity"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
-
-        <activity android:name=".ui.SampleActivity"
             android:exported="true"
-            android:configChanges="orientation"
-            android:screenOrientation="portrait">
-        </activity>
+            android:screenOrientation="portrait"></activity>
 
         <service android:name=".service.DrowsinessDetectionService" />
     </application>

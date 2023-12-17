@@ -166,6 +166,7 @@ object ProjectDependencies {
     const val camera2 = "androidx.camera:camera-camera2:${Versions.cameraX}"
     const val cameraLifecycle = "androidx.camera:camera-lifecycle:${Versions.cameraX}"
     const val cameraView = "androidx.camera:camera-view:${Versions.cameraX}"
+    const val cameraCore = "androidx.camera:camera-core:${Versions.cameraX}"
     const val onDeviceML = "com.google.android.odml:image:${Versions.onDeviceML}"
     const val activityKtx = "androidx.activity:activity-ktx:${Versions.activityKtx}"
     const val serenegiantCommon = "com.serenegiant:common:${Versions.serenegiantCommon}"

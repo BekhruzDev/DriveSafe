@@ -128,7 +128,7 @@ object Versions {
     const val workManager = "2.8.0"
     const val guava = "27.1-android"
     const val mlKitFaceDetection = "16.1.5"
-    const val cameraX = "1.3.0-beta02"
+    const val cameraX = "1.4.0-alpha02"
     const val onDeviceML = "1.0.0-beta1"
     const val activityKtx = "1.7.2"
     const val serenegiantCommon = "4.1.1"
