@@ -10,7 +10,7 @@
         motion:duration="1000">
        <KeyFrameSet>
            <KeyAttribute
-               motion:motionTarget="@+id/cardView"
+               motion:motionTarget="@+id/llMain"
                motion:framePosition="100"
                android:alpha="0.3" />
        </KeyFrameSet>
