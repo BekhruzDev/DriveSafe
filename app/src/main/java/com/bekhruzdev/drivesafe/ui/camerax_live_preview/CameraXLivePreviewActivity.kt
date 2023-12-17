@@ -104,6 +104,7 @@ class CameraXLivePreviewActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handleBackPressed()
+
         sharedPref = getSharedPreferences("device_preferences", Context.MODE_PRIVATE)
         listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             if (key == "timesSleepDetected") {
