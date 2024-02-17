@@ -11,7 +11,7 @@ object ProjectDependencies {
     const val fragmentKtx = "androidx.fragment:fragment-ktx:${Versions.fragmentKtx}"
     const val appCompat = "androidx.appcompat:appcompat:${Versions.appCompat}"
     const val constraintlayout = "androidx.constraintlayout:constraintlayout:${Versions.constrantLayout}"
-    const val material = "com.google.android.material:material:${Versions.design}"
+    const val material = "com.google.android.material:material:${Versions.material}"
     const val recyclerview = "androidx.recyclerview:recyclerview:${Versions.recyclerview}"
     const val lifecycleCommon = "androidx.lifecycle:lifecycle-common-java8:${Versions.lifecycle}"
     const val lifecycleViewModelKtx = "androidx.lifecycle:lifecycle-viewmodel-ktx:${Versions.lifecycle}"
@@ -103,6 +103,8 @@ object ProjectDependencies {
         "ru.tinkoff.scrollingpagerindicator:scrollingpagerindicator:${tinkoffDotsIndicator}"
     const val navigationComponent =
         "androidx.navigation:navigation-fragment:${Versions.navigationComponent}"
+    const val navigationFragmentKtx =
+        "androidx.navigation:navigation-fragment-ktx:${Versions.navigationComponent}"
     const val navigationUiKtx =
         "androidx.navigation:navigation-ui:${Versions.navigationComponent}"
     const val supportDesign = "com.android.support:design:${Versions.supportDesign}"
