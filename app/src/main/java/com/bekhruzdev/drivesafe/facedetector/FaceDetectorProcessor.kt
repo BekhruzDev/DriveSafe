@@ -29,9 +29,11 @@ import com.google.mlkit.vision.face.FaceDetectorOptions
 import com.google.mlkit.vision.face.FaceLandmark
 import java.util.Locale
 
-/** Face Detector Demo.  */
+/** Face Detector Demo.
+ * Used only in LivePreviewActivity and TestPreviewActivity, HAS NO RELATION TO THE DrowsinessDetectionService*/
 class FaceDetectorProcessor(val context: Context, detectorOptions: FaceDetectorOptions?,
-                            private val onFaceActions: OnFaceActions? = null
+    //TODO: presumably, we do not need the below line
+    private val onFaceActions: OnFaceActions? = null
 ) :
     VisionProcessorBase<List<Face>>(context) {
     private val detector: FaceDetector
@@ -58,9 +60,9 @@ class FaceDetectorProcessor(val context: Context, detectorOptions: FaceDetectorO
     }
 
     override fun onSuccess(faces: List<Face>, graphicOverlay: GraphicOverlay) {
-
         for (face in faces) {
             graphicOverlay.add(FaceGraphic(graphicOverlay, face))
+            //TODO: presumably, we do not need the below line
             onFaceActions?.onFaceAvailable(face)
         }
     }

@@ -16,8 +16,8 @@ import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleService
+import com.bekhruzdev.drivesafe.R
 import com.bekhruzdev.drivesafe.base.BaseComponent.handleSleeping
 import com.bekhruzdev.drivesafe.base.BaseComponent.startFlashlight
 import com.bekhruzdev.drivesafe.base.BaseComponent.stopFlashlight
@@ -31,8 +31,6 @@ import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetector
 import com.google.mlkit.vision.face.FaceDetectorOptions
-import com.bekhruzdev.drivesafe.R
-import com.bekhruzdev.drivesafe.facedetector.OnSleepActions
 import kotlinx.coroutines.*
 import java.util.concurrent.ExecutionException
 

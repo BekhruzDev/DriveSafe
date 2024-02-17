@@ -68,26 +68,6 @@ class CameraXLivePreviewActivity :
     private lateinit var listener:SharedPreferences.OnSharedPreferenceChangeListener
     private var dialogOpen = false
 
-
-
-    private fun openMaps() {
-        Log.d(TAG, "openMaps: ")
-        val query = "coffee shops"
-
-        // Create an Intent with the action and data for Google Maps
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$query"))
-
-        // Check if the user has the Google Maps app installed
-        if (intent.resolveActivity(packageManager) != null) {
-            // Start the activity if Google Maps is installed
-            startActivity(intent)
-        } else {
-            // If Google Maps is not installed, you can open the web version
-            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=$query"))
-            startActivity(webIntent)
-        }
-    }
-
     //connection with the Bound Service
     private val connection = @ExperimentalGetImage object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName?, service: IBinder?) {
@@ -105,7 +85,8 @@ class CameraXLivePreviewActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         handleBackPressed()
-
+        //Logic of break-suggesting
+        //Todo: Remove this logic
         sharedPref = getSharedPreferences("device_preferences", Context.MODE_PRIVATE)
         listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
             if (key == "timesSleepDetected") {
@@ -325,6 +306,24 @@ class CameraXLivePreviewActivity :
         )
         bindService(intent, connection, BIND_AUTO_CREATE)
         cameraXViewModel.setServiceBound(true)
+    }
+
+    private fun openMaps() {
+        Log.d(TAG, "openMaps: ")
+        val query = "coffee shops"
+
+        // Create an Intent with the action and data for Google Maps
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q=$query"))
+
+        // Check if the user has the Google Maps app installed
+        if (intent.resolveActivity(packageManager) != null) {
+            // Start the activity if Google Maps is installed
+            startActivity(intent)
+        } else {
+            // If Google Maps is not installed, you can open the web version
+            val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/maps/search/?api=1&query=$query"))
+            startActivity(webIntent)
+        }
     }
 
     public override fun onDestroy() {
